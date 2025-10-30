@@ -1,13 +1,14 @@
 package com.projeto.controleanimal.controller.animal;
 
-import com.projeto.controleanimal.controller.model.Cat;
+import com.projeto.controleanimal.model.Cat;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*")
 public class Controller {
 
     @GetMapping("/boris")

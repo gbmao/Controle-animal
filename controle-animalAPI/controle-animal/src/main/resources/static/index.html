@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Controle Animal</title>
+</head>
+<body>
+<h1>API Controle Animal</h1>
+<p>Bem-vindo! Clique abaixo para testar a API:</p>
+
+<button onclick="home()">Ver gato</button>
+<pre id="result"></pre>
+
+<script>
+    async function home() {
+      const res = await fetch('http://localhost:8080/api/boris');
+      const data = await res.json();
+      document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+    }
+</script>
+</body>
+</html>

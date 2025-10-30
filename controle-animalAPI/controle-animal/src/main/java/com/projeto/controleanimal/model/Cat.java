@@ -1,4 +1,4 @@
-package com.projeto.controleanimal.controller.model;
+package com.projeto.controleanimal.model;
 
 public class Cat {
     private String name;
