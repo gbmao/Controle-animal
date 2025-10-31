@@ -1,22 +1,31 @@
 package com.projeto.controleanimal.controller.animal;
 
+import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.projeto.controleanimal.service.AnimalService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 public class Controller {
+    private final AnimalService service;
 
-    @GetMapping("/boris")
-    public Cat home(){
-        Cat cat = new Cat("Boris", 5);
-        return cat;
+    public Controller(AnimalService service) {
+        this.service = service;
     }
 
 
+    @GetMapping("/{name}")
+    public Animal getAnimal(@PathVariable("name") String name) {
+     return service.getAnimal(name);
+    }
+
+    @GetMapping("/all")
+    public List<Animal> getAllAnimals() {
+        return service.getAllAnimals();
+    }
 
 }
