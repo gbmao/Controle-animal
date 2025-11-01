@@ -1,22 +1,25 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Controle Animal</title>
+  <meta charset="UTF-8">
+  <title>Controle Animal - Frontend</title>
+
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h1>API Controle Animal</h1>
-<p>Bem-vindo! Clique abaixo para testar a API:</p>
+  <h1>Buscar Gato Boris</h1>
+  <button onclick="buscarBoris()">Buscar</button>
+  <pre id="resultado"></pre>
 
-<button onclick="home()">Ver gato</button>
-<pre id="result"></pre>
-
-<script>
-    async function home() {
-      const res = await fetch('http://localhost:8080/api/boris');
-      const data = await res.json();
-      document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+  <script>
+    function buscarBoris() {
+      fetch('http://localhost:8080/api/boris')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('resultado').textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(err => alert('Erro: ' + err));
     }
-</script>
+  </script>
 </body>
 </html>
