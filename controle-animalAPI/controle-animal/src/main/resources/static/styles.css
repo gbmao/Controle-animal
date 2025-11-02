@@ -78,6 +78,19 @@ h2 {
     font-weight: 400;
 }
 
+.header__logo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo--projeto {
+    width: 25px;
+    height: 22px;
+}
+
 .header__toggle {
     display: flex;
     justify-content: flex-end;
