@@ -37,12 +37,18 @@ async function buscarApi() {
     const dados = await resposta.json();
 
     
-    resultado.innerHTML = `
-        <h2>Resultados:</h2>
-        <ul>
-        ${dados.map(item => `<li>${item.name}</li>`).join("")}
-        </ul>
-        `;
+const arrowSvg = `
+<svg width="13" height="8" viewBox="0 0 13 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.01599 1.01599L6.09599 6.09599L11.176 1.01599" stroke="#7A9590" stroke-width="2.032" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`;
+
+resultado.innerHTML = `
+    <h2>Gatos registrados:</h2>
+    <ul class="lista--registrados">
+    ${dados.map(item => `<li class="item--lista--registrados">${item.name} ${arrowSvg}</li>`).join("")}
+    </ul>
+`;
     } catch (erro) {
         resultado.innerHTML = `<p style="color:red;">${erro.message}</p>`;
     }
