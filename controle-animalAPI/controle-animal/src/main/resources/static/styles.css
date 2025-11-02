@@ -1,7 +1,13 @@
-:root {
+:root, :root[data-theme='light'] {
     --bg-color: #F1E7DD;
     --header-bg: #7A9590;
     --text-color: #26211E;
+}
+
+:root[data-theme='dark'] {
+    --bg-color: #26211E;
+    --header-bg: #7A9590;
+    --text-color: #F1E7DD;
 }
 
 * {
@@ -11,6 +17,7 @@
 
 body {
     background-color: var(--bg-color);
+    color: var(--text-color);
 }
 
 header {
@@ -19,6 +26,13 @@ header {
     justify-content: space-between;
     align-items: center;
     height: 10vh;
-    background-color: #7A9590;
+    background-color: var(--header-bg);
+    color: var(--text-color);
 }
+
+
+
+
+
+
 

@@ -43,15 +43,6 @@
   <button onclick="buscarBoris()">Buscar</button>
   <pre id="resultado"></pre>
 
-  <script>
-    function buscarBoris() {
-      fetch('http://localhost:8080/api/boris')
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById('resultado').textContent = JSON.stringify(data, null, 2);
-        })
-        .catch(err => alert('Erro: ' + err));
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
