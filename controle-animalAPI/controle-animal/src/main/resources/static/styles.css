@@ -87,6 +87,9 @@ h2 {
 }
 
 .logo--projeto {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     width: 25px;
     height: 22px;
 }
