@@ -15,6 +15,7 @@ import java.util.Scanner;
 public class Db {
 
     private static final String FILE_PATH = "C:\\Users\\debor\\Controle-animal\\controle-animalAPI\\controle-animal\\src\\main\\java\\com\\projeto\\controleanimal\\database\\output.txt";
+   // private static final String FILE_PATH = "src/main/java/com/projeto/controleanimal/database/output.txt";
 
     public static void saveList(Map<String, Animal> list) {
         try {
