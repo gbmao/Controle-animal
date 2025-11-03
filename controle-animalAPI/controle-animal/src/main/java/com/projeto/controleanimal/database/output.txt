@@ -1,5 +1,13 @@
+,0
+emma,0
+emma2,0
+Olaf,5
 Boris,7
 Debora,3
+hermes,2
+Alfred,6
+Mimi,2
 Jorge,3
 Ivaldo,1
-Alfred,6
+juracir,4
+Jorginho,0

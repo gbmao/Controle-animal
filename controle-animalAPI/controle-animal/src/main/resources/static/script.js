@@ -1,12 +1,4 @@
-function buscarBoris() {
-    fetch('http://localhost:8080/api/boris')
-        .then(response => response.json())
-        .then(data => {
-        document.getElementById('resultado').textContent = JSON.stringify(data, null, 2);
-        })
-        .catch(err => alert('Erro: ' + err));
-    }
-
+//Relacionado aos temas (light and dark)
 const toggleTheme = document.getElementById("toggleTheme");
 const rootHtml = document.documentElement;
 function changeTheme() {
@@ -23,6 +15,7 @@ toggleTheme.addEventListener("click", changeTheme);
 const linkListar = document.getElementById("listarLink");
 const resultado = document.getElementById("resultado");
 
+//Relacionado ao Listar
 // Define a URL da sua API
 const API_URL = "http://localhost:8080/api/all";
 
@@ -36,7 +29,7 @@ async function buscarApi() {
 
     const dados = await resposta.json();
 
-    
+
 const arrowSvg = `
 <svg width="13" height="8" viewBox="0 0 13 8" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M1.01599 1.01599L6.09599 6.09599L11.176 1.01599" stroke="#7A9590" stroke-width="2.032" stroke-linecap="round" stroke-linejoin="round"/>
@@ -59,3 +52,65 @@ resultado.innerHTML = `
       evento.preventDefault(); // impede o salto da âncora
     buscarApi();
     });
+
+async function adicionarGato() {
+      // pega os valores dos inputs
+    const name = document.getElementById("name").value.trim(); // trim() remove espaços vazios
+    const age = parseInt(document.getElementById("age").value);
+
+    if (!name) {
+    alert("Por favor, digite o nome do gato antes de cadastrar!");
+    return;
+    }
+
+      // monta o objeto com os dados do usuário
+    const novoGato = { name, age };
+
+      // envia para o backend
+    const resposta = await fetch("http://localhost:8080/api", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(novoGato)
+    });
+
+    if (!resposta.ok) {
+        throw new Error("Erro ao cadastrar o gato");
+    }
+
+    const data = await resposta.json();
+    console.log("Gato cadastrado:", data);
+
+    alert(`Gato ${data.name} cadastrado com sucesso!`);
+    adicionarSection.style.display = "none";
+    }
+
+    const linkAdicionar = document.getElementById("adicionarLink");
+    const adicionarSection = document.getElementById("adicionarSection");
+
+linkAdicionar.addEventListener("click", function(event) {
+event.preventDefault();
+// Esconde outras seções se necessário
+resultado.innerHTML = ""; // esconde a lista, por exemplo
+adicionarSection.style.display = "block";
+});
+
+//Funções para esconder as outras seções que não estou usando
+function esconderTodasSecoes() {
+    resultado.innerHTML = "";
+    adicionarSection.style.display = "none";
+  // Adicione outras seções aqui se necessário
+}
+
+linkListar.addEventListener("click", (evento) => {
+    evento.preventDefault();
+    esconderTodasSecoes();
+    buscarApi();
+});
+
+linkAdicionar.addEventListener("click", function(event) {
+    event.preventDefault();
+    esconderTodasSecoes();
+    adicionarSection.style.display = "block";
+});
