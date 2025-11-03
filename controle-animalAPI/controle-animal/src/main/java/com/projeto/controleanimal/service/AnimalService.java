@@ -45,4 +45,11 @@ public class AnimalService {
         Db.saveList(animals);
         return cat;
     }
+
+    public Animal deleteAnimal(String name) {
+
+        Animal removed = animals.remove(name.substring(0,1).toUpperCase().concat(name.substring(1).toLowerCase()));
+        Db.saveList(animals);
+       return removed;
+    }
 }

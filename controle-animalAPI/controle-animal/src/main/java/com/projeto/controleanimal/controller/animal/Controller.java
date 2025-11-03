@@ -33,4 +33,12 @@ public class Controller {
         return service.addAnimal(cat);
     }
 
+    // Necessario chamar name como parametro para deletar!
+    //ex: http://localhost:8080/api/remove?name=Ivaldo
+
+    @DeleteMapping("/remove")
+    public Animal deleteAnimal(@RequestParam String name) {
+        return service.deleteAnimal(name);
+    }
+
 }
