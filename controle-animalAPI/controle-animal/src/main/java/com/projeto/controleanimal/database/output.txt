@@ -1,3 +1,4 @@
+emma,5
 Olaf,5
 Boris,7
 Debora,3
@@ -7,4 +8,4 @@ Mimi,2
 Jorge,3
 Ivaldo,1
 juracir,4
-emma,5
+,0
