@@ -1,0 +1,5 @@
+Boris,7
+Debora,3
+Jorge,3
+Ivaldo,1
+Alfred,6
