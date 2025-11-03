@@ -132,9 +132,41 @@ h2 {
     padding: 0.5rem 1rem;
 }
 
+#adicionarSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 1rem;
+}
 
+.adicionar--gato--titulo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+#adicionarSection > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza label e input */
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
 
+#adicionarSection label {
+    align-self: center;
+    margin-bottom: 0.2rem;
+}
+
+#adicionarSection input {
+    width: 250px; /* Ou outro valor desejado */
+}
+
+#adicionarSection button {
+    align-self: center;
+}
 
 
 

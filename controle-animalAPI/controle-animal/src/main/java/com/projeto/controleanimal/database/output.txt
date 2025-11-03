@@ -1,5 +1,10 @@
+Olaf,5
 Boris,7
 Debora,3
+hermes,2
+Alfred,6
+Mimi,2
 Jorge,3
 Ivaldo,1
-Alfred,6
+juracir,4
+emma,5
