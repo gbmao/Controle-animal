@@ -28,4 +28,9 @@ public class Controller {
         return service.getAllAnimals();
     }
 
+    @PostMapping()
+    public Animal addCat(@RequestBody Cat cat){
+        return service.addAnimal(cat);
+    }
+
 }
