@@ -22,7 +22,7 @@
     vertical-align: baseline;
     list-style: none;
     scrollbar-width: thin;
-    scrollbar-color: var(--secondary-bg-color) transparent;
+    scrollbar-color: var(--header-bg) transparent;
 }
 
 body {
@@ -59,6 +59,7 @@ input {
     border: none;
     min-height: 3rem;
     border-radius: 4px;
+    padding: 5px;
 }
 
 input::placeholder {

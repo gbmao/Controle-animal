@@ -55,8 +55,13 @@ resultado.innerHTML = `
 
 async function adicionarGato() {
       // pega os valores dos inputs
-    const name = document.getElementById("name").value;
+    const name = document.getElementById("name").value.trim(); // trim() remove espaços vazios
     const age = parseInt(document.getElementById("age").value);
+
+    if (!name) {
+    alert("Por favor, digite o nome do gato antes de cadastrar!");
+    return;
+    }
 
       // monta o objeto com os dados do usuário
     const novoGato = { name, age };
@@ -69,6 +74,10 @@ async function adicionarGato() {
         },
         body: JSON.stringify(novoGato)
     });
+
+    if (!resposta.ok) {
+        throw new Error("Erro ao cadastrar o gato");
+    }
 
     const data = await resposta.json();
     console.log("Gato cadastrado:", data);
