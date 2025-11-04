@@ -4,5 +4,6 @@
         "comments": true,
         "strings": true
     },
-    "editor.suggestOnTriggerCharacters": true
+    "editor.suggestOnTriggerCharacters": true,
+    "java.compile.nullAnalysis.mode": "automatic"
 }
