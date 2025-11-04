@@ -48,7 +48,8 @@ public class AnimalService {
 
     public Animal deleteAnimal(String name) {
 
-        Animal removed = animals.remove(name.substring(0,1).toUpperCase().concat(name.substring(1).toLowerCase()));
+//        Animal removed = animals.remove(name.substring(0,1).toUpperCase().concat(name.substring(1).toLowerCase()));
+        Animal removed = animals.remove(name.toLowerCase());
         Db.saveList(animals);
        return removed;
     }

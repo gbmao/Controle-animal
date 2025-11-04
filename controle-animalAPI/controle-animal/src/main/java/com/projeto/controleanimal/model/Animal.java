@@ -6,6 +6,9 @@ public abstract class Animal {
 
 
     Animal(String name, int age) {
+        if(name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Nome vazio!");
+        }
         this.name = name;
         this.age = age;
     }

@@ -14,8 +14,8 @@ import java.util.Scanner;
 
 public class Db {
 
-    private static final String FILE_PATH = "C:\\Users\\debor\\Controle-animal\\controle-animalAPI\\controle-animal\\src\\main\\java\\com\\projeto\\controleanimal\\database\\output.txt";
-   // private static final String FILE_PATH = "src/main/java/com/projeto/controleanimal/database/output.txt";
+//    private static final String FILE_PATH = "C:\\Users\\debor\\Controle-animal\\controle-animalAPI\\controle-animal\\src\\main\\java\\com\\projeto\\controleanimal\\database\\output.txt";
+    private static final String FILE_PATH = "src/main/java/com/projeto/controleanimal/database/output.txt";
 
     public static void saveList(Map<String, Animal> list) {
         try {
@@ -47,7 +47,7 @@ public class Db {
                 if (parts.length == 2) {
                     String name = parts[0].trim();
                     int age = Integer.parseInt(parts[1].trim());
-                    list.put(name, new Cat(name, age));
+                    list.put(name.toLowerCase(), new Cat(name, age));
                 }
             }
             System.out.println("Arquivo carregado com sucesso!");

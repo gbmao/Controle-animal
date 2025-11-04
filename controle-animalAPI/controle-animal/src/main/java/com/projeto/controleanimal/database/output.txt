@@ -1,13 +1,10 @@
-,0
-Olaf,5
+Jorge,3
 Jorginho,0
 Alfredo,15
-Jorge,3
 emma,0
 emma2,0
-Boris,7
-Debora,3
 hermes,2
-Alfred,6
 Mimi,2
 juracir,4
+Alfred,6
+Debora,3
