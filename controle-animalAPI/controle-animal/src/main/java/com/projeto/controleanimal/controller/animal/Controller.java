@@ -18,9 +18,9 @@ public class Controller {
     }
 
 
-    @GetMapping("/{name}")
-    public Animal getAnimal(@PathVariable("name") String name) {
-     return service.getAnimal(name);
+    @GetMapping("/{id}")
+    public Animal getAnimal(@PathVariable("id") Long id) {
+     return service.getAnimal(id);
     }
 
     @GetMapping("/all")
@@ -28,17 +28,18 @@ public class Controller {
         return service.getAllAnimals();
     }
 
+    //TODO checar qual tipo de animal é para criar uma instancia ESPECIFICA
     @PostMapping()
-    public Animal addCat(@RequestBody Cat cat){
-        return service.addAnimal(cat);
+    public Animal addCat(@RequestBody Animal animal){
+        return service.addAnimal(animal);
     }
 
     // Necessario chamar name como parametro para deletar!
     //ex: http://localhost:8080/api/remove?name=Ivaldo
 
     @DeleteMapping("/remove")
-    public Animal deleteAnimal(@RequestParam String name) {
-        return service.deleteAnimal(name);
+    public void deleteAnimal(@RequestParam Long id) {
+         service.deleteAnimal(id);
     }
 
 }
