@@ -41,6 +41,9 @@ public class AnimalService {
     }
 
     public Animal addAnimal(Cat cat) {
+        if(animals.containsKey(cat.getName().toLowerCase())) {
+            throw new IllegalArgumentException("Já existe esse nome na lista");
+        }
         animals.put(cat.getName().toLowerCase(), cat);
         Db.saveList(animals);
         return cat;

@@ -8,3 +8,4 @@ Mimi,2
 juracir,4
 Alfred,6
 Debora,3
+Boris,6
