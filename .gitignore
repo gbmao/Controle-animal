@@ -35,3 +35,4 @@ build/
 ### test ###
 ./src/main/com/projeto/controleanimal/TestMain.java
 src/main/java/com/projeto/controleanimal/TestMain.java
+src/main/resources/application-dbprod.properties
