@@ -28,7 +28,7 @@ public class Controller {
     @GetMapping("/{id}")
     public AnimalDto getAnimal(@PathVariable("id") Long id) {
         Animal animal =  service.getAnimal(id);
-        return new AnimalDto(animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
+        return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
 
     }
 
@@ -36,7 +36,7 @@ public class Controller {
     public List<AnimalDto> getAllAnimals() {
         return service.getAllAnimals()
                 .stream()
-                .map(s -> new AnimalDto(s.getName(), s.getAge(), s.getClass().getSimpleName()))
+                .map(s -> new AnimalDto(s.getId(),s.getName(), s.getAge(), s.getClass().getSimpleName()))
                 .toList();
     }
 
