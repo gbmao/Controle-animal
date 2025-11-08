@@ -1,5 +1,6 @@
 package com.projeto.controleanimal.controller.animal;
 
+import com.projeto.controleanimal.dto.AnimalDto;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.service.AnimalService;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -33,13 +35,13 @@ public class Controller {
         return service.getAllAnimals();
     }
 
-    //TODO checar qual tipo de animal é para criar uma instancia ESPECIFICA
+
     @PostMapping()
-    public Animal addCat(@RequestHeader("x-api-key") String key, @RequestBody Animal animal) {
+    public Animal addAnimal(@RequestHeader("x-api-key") String key, @RequestBody AnimalDto dto) {
         if (!secret.equals(key)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Não autorizado");
         }
-        return service.addAnimal(animal);
+        return service.addAnimal(dto);
     }
 
     // Necessario chamar name como parametro para deletar!
