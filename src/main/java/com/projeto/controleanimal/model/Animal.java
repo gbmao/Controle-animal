@@ -1,11 +1,9 @@
 package com.projeto.controleanimal.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public  class Animal { //removido o abstract para teste do postqgre
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
