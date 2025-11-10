@@ -52,8 +52,8 @@ public class Controller {
     // Necessario chamar name como parametro para deletar!
     //ex: http://localhost:8080/api/remove?name=Ivaldo
 
-    @DeleteMapping("/remove")
-    public void deleteAnimal(@RequestHeader("x-api-key") String key, @RequestParam Long id) {
+    @DeleteMapping("/{id}")
+    public void deleteAnimal(@RequestHeader("x-api-key") String key, @PathVariable("id") Long id) {
         if (!secret.equals(key)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Não autorizado");
         }
