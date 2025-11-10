@@ -1,9 +1,13 @@
 package com.projeto.controleanimal.service;
 
 import com.projeto.controleanimal.database.Db;
+import com.projeto.controleanimal.dto.AnimalDto;
 import com.projeto.controleanimal.model.Animal;
+import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.repository.AnimalRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -40,15 +44,17 @@ public class AnimalService {
         return repo.findById(id).orElse(null);
     }
 
-    public Animal addAnimal(Animal animal) {
-//        if (repo.containsKey(animal.getName().toLowerCase())) {
-//            throw new IllegalArgumentException("Já existe esse nome na lista");
-//        }
-        if(containsName(animal.getName())) {
+    public Animal addAnimal(AnimalDto animalDto) {
+
+        if(containsName(animalDto.name())) {
             throw new IllegalArgumentException("Já existe esse nome na lista");
         }
-//        animals.put(animal.getName().toLowerCase(), animal);
-//        Db.saveList(animals);
+
+        Animal animal = switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
+            case "cat" -> new Cat(animalDto.name(), animalDto.age());
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo invalido"); // TODO criar uma classe generica para aceitar quando vier null
+        };
+
         repo.save(animal);
         return animal;
     }
