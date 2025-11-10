@@ -33,6 +33,7 @@ async function listarGatos() {
 }
 
 async function deletarGato(id) {
+  console.log(`${API_URL}/${id}`)
   if (!confirm('Deseja realmente deletar este gato?')) return
   try {
     const resposta = await fetch(`${API_URL}/${id}`, {
