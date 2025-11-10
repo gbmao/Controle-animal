@@ -19,7 +19,7 @@ const resultado = document.getElementById("resultado");
 
 //Relacionado ao Listar
 // Define a URL da sua API (nova URL com /api/all)
-const API_URL = "https://controle-animal-production.up.railway.app/api/all";
+const API_URL = "http://localhost:8080/api/all";
 
 // Função que busca a API
 async function buscarApi() {
@@ -37,10 +37,15 @@ async function buscarApi() {
 </svg>
 `;
 
-        resultado.innerHTML = `
+resultado.innerHTML = `
     <h2>Gatos registrados:</h2>
     <ul class="lista--registrados">
-    ${dados.map(item => `<li class="item--lista--registrados">${item.name} ${arrowSvg}</li>`).join("")}
+    ${dados.map(item => `
+        <li class="item--lista--registrados">
+            ${item.name} ${arrowSvg}
+            <button onclick="deletarGato(${item.id})" class="btn-delete">🗑️</button>
+        </li>
+    `).join("")}
     </ul>
 `;
     } catch (erro) {
@@ -68,7 +73,7 @@ async function adicionarGato() {
     const novoGato = { name, age };
 
     // envia para o backend (agora também com /api/all)
-    const resposta = await fetch("https://controle-animal-production.up.railway.app/api", {
+    const resposta = await fetch("http://localhost:8080/api", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -115,3 +120,6 @@ linkAdicionar.addEventListener("click", function(event) {
     esconderTodasSecoes();
     adicionarSection.style.display = "block";
 });
+
+const deletarGato = document.getElementById("deletarGato");
+
