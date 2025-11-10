@@ -1,19 +1,27 @@
 <template>
-  <CatList />
+  <header class="header">
+    <NavMenu />
+
+    <div class="header__logo">
+      <h1 class="header--text">Controle Animal</h1>
+    </div>
+
+    <div class="header__toggle">
+      <i id="toggleTheme" class="bi bi-sun" @click="toggleTheme"></i>
+    </div>
+  </header>
+
+  <main>
+    <RouterView />
+  </main>
 </template>
 
 <script setup>
-import CatList from './components/CatList.vue'
-</script>
+import NavMenu from './components/NavMenu.vue'
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background-color: #fafafa;
-  padding: 20px;
+function toggleTheme() {
+  const root = document.documentElement
+  const current = root.getAttribute('data-theme')
+  root.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark')
 }
-button {
-  margin: 5px;
-  padding: 8px 12px;
-}
-</style>
+</script>
