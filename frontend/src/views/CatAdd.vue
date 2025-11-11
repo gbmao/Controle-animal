@@ -13,7 +13,7 @@ import { ref } from 'vue'
 
 const API_URL = import.meta.env.VITE_API_URL
 const API_KEY = import.meta.env.VITE_API_KEY
-const novo = ref({ name: '', age: 0 })
+const novo = ref({ name: '', age: 0, type: 'Cat' })
 
 async function adicionarGato() {
   if (!novo.value.name) {
@@ -34,7 +34,7 @@ async function adicionarGato() {
     if (!resposta.ok) throw new Error('Erro ao adicionar gato')
 
     alert('Gato adicionado!')
-    novo.value = { name: '', age: 0 }
+    novo.value = { name: '', age: 0, type: 'Cat'}
   } catch (err) {
     alert(err.message)
   }
