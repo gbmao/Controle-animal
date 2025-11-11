@@ -1,13 +1,26 @@
 package com.projeto.controleanimal.model;
 
-public abstract class Animal {
+import jakarta.persistence.*;
+
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public  class Animal { //removido o abstract para teste do postqgre
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String name;
     private int age;
 
+    public Animal() {
+    }
 
     Animal(String name, int age) {
+        if(name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Nome vazio!");
+        }
         this.name = name;
-        this.age = age;
+        this.age = age; //TODO animal esta sendo criado com idade 0 caso null
     }
 
     public String getName() {
@@ -28,5 +41,9 @@ public abstract class Animal {
     // funcao birthday() que alem de alterar a idade daria um aviso de aniversario
     void setAge(int age) {
         this.age = age;
+    }
+
+    public Long getId() {
+        return id;
     }
 }
