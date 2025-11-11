@@ -1,6 +1,6 @@
 HELP.md
 target/
-.mvn/wrapper/maven-wrapper.jar
+backend/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -33,6 +33,6 @@ build/
 .vscode/
 
 ### test ###
-./src/main/com/projeto/controleanimal/TestMain.java
-src/main/java/com/projeto/controleanimal/TestMain.java
-src/main/resources/application-dbprod.properties
+backend/src/main/com/projeto/controleanimal/TestMain.java
+backend/src/main/java/com/projeto/controleanimal/TestMain.java
+backend/src/main/resources/application-dbprod.properties
