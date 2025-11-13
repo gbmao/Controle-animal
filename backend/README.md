@@ -81,6 +81,38 @@ curl -X DELETE -H "x-api-key: {senha}" https://controle-animal-production.up.rai
 Resposta:
 ✅ 204 No Content (sem corpo na resposta)
 
+🔹 PUT /{id}
+
+Altera o nome e/ou idade do animal pelo ID.
+
+Exemplo:
+
+```bash
+curl -X PUT -H "x-api-key: {senha}" https://controle-animal-production.up.railway.app/api/3
+```
+Body JSON:
+```json
+{
+  "name": "Luna",
+  "age": 4
+}
+```
+
+
+Resposta:
+✅200 OK 
+
+Body JSON:
+```json
+{
+  "id": 5,
+  "name": "Luna",
+  "age": 4,
+  "type": "Animal" 
+}
+```
+
+
 🔐 Autenticação
 
 Todas as rotas que modificam dados (POST, DELETE) exigem o header:
