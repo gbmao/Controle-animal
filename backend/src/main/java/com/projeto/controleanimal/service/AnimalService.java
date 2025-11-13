@@ -6,6 +6,7 @@ import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.repository.AnimalRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -49,6 +50,8 @@ public class AnimalService {
         if(containsName(animalDto.name())) {
             throw new IllegalArgumentException("Já existe esse nome na lista");
         }
+        //pega número negativo em age
+        if(animalDto.age() < 0) throw new IllegalArgumentException(" número negativo");
 
         Animal animal = switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
             case "cat" -> new Cat(animalDto.name(), animalDto.age());
