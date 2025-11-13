@@ -1,6 +1,7 @@
 package com.projeto.controleanimal.controller.animal;
 
 import com.projeto.controleanimal.dto.AnimalDto;
+import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.service.AnimalService;
@@ -27,7 +28,7 @@ public class Controller {
 
     @GetMapping("/{id}")
     public AnimalDto getAnimal(@PathVariable("id") Long id) {
-        Animal animal =  service.getAnimal(id);
+        Animal animal = service.getAnimal(id);
         return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
 
     }
@@ -36,14 +37,15 @@ public class Controller {
     public List<AnimalDto> getAllAnimals() {
         return service.getAllAnimals()
                 .stream()
-                .map(s -> new AnimalDto(s.getId(),s.getName(), s.getAge(), s.getClass().getSimpleName()))
+                .map(s -> new AnimalDto(s.getId(), s.getName(), s.getAge(), s.getClass().getSimpleName()))
                 .toList();
     }
 
 
     @PostMapping()
     public Animal addAnimal(@RequestHeader("x-api-key") String key, @RequestBody AnimalDto dto) {
-        if (!secret.equals(key)) {
+
+        if (!secret.equals(key)) { //TODO colocar isso em um metodo para ser chamado e evitar repeticao
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Não autorizado");
         }
         return service.addAnimal(dto);
@@ -58,6 +60,17 @@ public class Controller {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Não autorizado");
         }
         service.deleteAnimal(id);
+    }
+
+    @PutMapping("/{id}")
+    public AnimalDto changeName(@RequestHeader("x-api-key") String key, @PathVariable("id") Long animalId,
+                                      @RequestBody AnimalUpdateDto animalDto) {
+
+        if (!secret.equals(key)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Não autorizado");
+        }
+
+        return service.changeAnimal(animalId, animalDto);
     }
 
 }

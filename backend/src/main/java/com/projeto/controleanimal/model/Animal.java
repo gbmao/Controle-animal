@@ -33,13 +33,13 @@ public  class Animal { //removido o abstract para teste do postqgre
 
     // setters devem ser chamados apenas por  funçoes especificas
     //ex crie uma funcao changeName()
-    void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
     //eventualmente criar um envelhecimento automatico baseado na data de nascimento do animal
     // funcao birthday() que alem de alterar a idade daria um aviso de aniversario
-    void setAge(int age) {
+    public void setAge(int age) {
         this.age = age;
     }
 

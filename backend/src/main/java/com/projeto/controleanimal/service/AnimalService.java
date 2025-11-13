@@ -2,6 +2,7 @@ package com.projeto.controleanimal.service;
 
 import com.projeto.controleanimal.database.Db;
 import com.projeto.controleanimal.dto.AnimalDto;
+import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.repository.AnimalRepository;
@@ -22,17 +23,10 @@ public class AnimalService {
         this.repo = repo;
     }
 
-    //    public Map<String, Animal> getAnimals() {
-//        return Map.copyOf(animals);
-//    }
     public List<Animal> getAllAnimals() {
         return repo.findAll();
     }
 
-    //retorna todos os animais
-//    public List<Animal> getAllAnimals() {
-//        return new ArrayList<>(this.animals.values());
-//    }
 
     /**
      * Retorna NULL caso o nome não exista!(
@@ -41,21 +35,21 @@ public class AnimalService {
      * @return O animal
      */
     public Animal getAnimal(Long id) {
-//        return animals.getOrDefault(name, null); //TODO lançar uma excessao em caso de null
         return repo.findById(id).orElse(null);
     }
 
     public Animal addAnimal(AnimalDto animalDto) {
 
-        if(containsName(animalDto.name())) {
+        if (containsName(animalDto.name())) {
             throw new IllegalArgumentException("Já existe esse nome na lista");
         }
         //pega número negativo em age
-        if(animalDto.age() < 0) throw new IllegalArgumentException(" número negativo");
+        if (animalDto.age() < 0) throw new IllegalArgumentException(" número negativo");
 
         Animal animal = switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
             case "cat" -> new Cat(animalDto.name(), animalDto.age());
-            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo invalido"); // TODO criar uma classe generica para aceitar quando vier null
+            default ->
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo invalido"); // TODO criar uma classe generica para aceitar quando vier null
         };
 
         repo.save(animal);
@@ -63,21 +57,37 @@ public class AnimalService {
     }
 
     public void deleteAnimal(Long id) {
-
-//        Animal removed = animals.remove(name.toLowerCase());
-//        Db.saveList(animals);
-//        return removed;
-         repo.delete(getAnimal(id));
-         //colocar alguma msg avisando que foi deletado???
+        repo.delete(getAnimal(id));
+        //colocar alguma msg avisando que foi deletado???
     }
-    
-    
+
+    public AnimalDto changeAnimal(Long animalId, AnimalUpdateDto animalUpdateDto) {
+
+        var animalToBeChanged = repo.findById(animalId)
+                .orElseThrow(); //TODO entender melhor e talvez dedicar uma classe em GlobalExceptionHandler
+
+        if (animalUpdateDto.name() != null) {
+            animalToBeChanged.setName(animalUpdateDto.name());
+        }
+        if (animalUpdateDto.age() != null) {
+            //pega número negativo em age
+            if (animalUpdateDto.age() < 0) throw new IllegalArgumentException(" número negativo");
+            animalToBeChanged.setAge(animalUpdateDto.age());
+        }
+
+        repo.save(animalToBeChanged); //TODO devolver na class especifica ao inves de Animal
+
+        return new AnimalDto(animalToBeChanged.getId(), animalToBeChanged.getName(), animalToBeChanged.getAge(),
+                animalToBeChanged.getClass().getSimpleName());
+    }
+
+
     //procura por nomes duplicados
     //eventualmente trocar esse method por algo mais pratico do propio postgre!!!
     private boolean containsName(String name) {
         List<Animal> listOfName = new ArrayList<>(repo.findAll());
         for (Animal a : listOfName) {
-            if(a.getName().equalsIgnoreCase(name))return true;
+            if (a.getName().equalsIgnoreCase(name)) return true;
         }
         return false;
     }
