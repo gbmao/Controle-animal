@@ -20,9 +20,6 @@
   </nav>
 </template>
 
-<style scoped>
-.menu__link.active {
-  font-weight: bold;
-  color: var(--color-primary);
-}
+<style>
+
 </style>
