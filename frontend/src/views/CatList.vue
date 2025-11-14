@@ -1,20 +1,23 @@
 <template>
   <section>
     <h2>Lista de Gatos</h2>
-    <button @click="listarGatos">Atualizar</button>
-
+    
     <ul v-if="gatos.length">
+      
       <li v-for="gato in gatos" :key="gato.id">
+        <baseCard>
         {{ gato.name }} ({{ gato.age }} anos)
         <button @click="deletarGato(gato.id)">🗑️</button>
+        </baseCard>
       </li>
+      
     </ul>
-
     <p v-else>Nenhum gato encontrado 😺</p>
   </section>
 </template>
 
 <script setup>
+import BaseCard from '@/components/BaseCard.vue'
 import { ref, onMounted } from 'vue'
 
 const API_URL = import.meta.env.VITE_API_URL

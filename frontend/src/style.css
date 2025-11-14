@@ -116,11 +116,16 @@ input::placeholder {
 }
 
 #toggleTheme {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: var(--text-header);
     cursor: pointer;
-    transition: ease-in-out .4s;
 }
+
+    #toggleTheme:hover {
+        font-size: 1.3rem;
+        color: var(--text-color);
+        transition: ease-in-out .4s;
+    }
 
 #resultado {
     display: flex;
