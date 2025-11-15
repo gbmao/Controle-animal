@@ -2,28 +2,28 @@
   <section>
     <h2>Gatos registrados:</h2>
     
-    <ul v-if="gatos.length">
+    <ul class="cat--list" v-if="gatos.length">
       
-      <li v-for="gato in gatos" :key="gato.id">
-  <baseCard>
+      <li class="cat--list--item" v-for="gato in gatos" :key="gato.id">
+        <baseCard>
 
-    <!-- Cabeçalho do gato (clique para expandir/fechar) -->
-    <div class="nome--gato--info" @click="toggleInfo(gato.id)">
-      {{ gato.name }}
-      <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
-    </div>
+          <!-- Cabeçalho do gato (clique para expandir/fechar) -->
+          <div class="nome--gato--info" @click="toggleInfo(gato.id)">
+            {{ gato.name }}
+            <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
+          </div>
 
-    <!-- Conteúdo expandido -->
-    <div 
-      class="gato-detalhes"
-      v-show="aberto[gato.id]"
-    >
-      <p>Idade: {{ gato.age }}</p>
-      <button @click="deletarGato(gato.id)">🗑️ Deletar</button>
-    </div>
+          <!-- Conteúdo expandido -->
+          <div 
+            class="gato-detalhes"
+            v-show="aberto[gato.id]"
+          >
+            <p>Idade: {{ gato.age }}</p>
+            <button @click="deletarGato(gato.id)">🗑️ Deletar</button>
+          </div>
 
-  </baseCard>
-</li>
+        </baseCard>
+      </li>
       
     </ul>
     <p v-else>Nenhum gato encontrado</p>
