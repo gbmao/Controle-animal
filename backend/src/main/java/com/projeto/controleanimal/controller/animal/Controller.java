@@ -35,10 +35,12 @@ public class Controller {
 
     @GetMapping("/all")
     public List<AnimalDto> getAllAnimals() {
-        return service.getAllAnimals()
-                .stream()
-                .map(s -> new AnimalDto(s.getId(), s.getName(), s.getAge(), s.getClass().getSimpleName()))
-                .toList();
+//        return service.getAllAnimals()
+//                .stream()
+//                .map(s -> new AnimalDto(s.getId(), s.getName(), s.getAge(), s.getClass().getSimpleName()))
+//                .toList();
+
+        return service.getAllAnimals();
     }
 
 

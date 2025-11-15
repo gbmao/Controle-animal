@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public  class Animal { //removido o abstract para teste do postqgre
+@DiscriminatorColumn(name = "type")
+public abstract class Animal { //removido o abstract para teste do postqgre
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

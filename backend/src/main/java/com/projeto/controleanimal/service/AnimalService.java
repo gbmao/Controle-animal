@@ -23,8 +23,10 @@ public class AnimalService {
         this.repo = repo;
     }
 
-    public List<Animal> getAllAnimals() {
-        return repo.findAll();
+    public List<AnimalDto> getAllAnimals() {
+        return repo.findAll().stream()
+                .map(s -> new AnimalDto(s.getId(), s.getName(), s.getAge(), s.getClass().getSimpleName()))
+                .toList();
     }
 
 
