@@ -77,6 +77,7 @@ input::placeholder {
     background-color: var(--header-bg);
     font-family: "Montserrat", sans-serif;
     color: var(--text-header);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .header--text {
@@ -211,7 +212,44 @@ main {
     justify-content: flex-end;
 }
 
+.nome--gato--info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5rem;
+}
 
+.nome--gato--info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
 
+.nome--gato--info svg {
+    transition: transform 0.3s ease;
+}
+
+.rotacionado {
+    transform: rotate(180deg);
+}
+
+.gato-detalhes {
+    margin-top: 10px;
+    padding-left: 10px;
+}
+
+.base-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: fit-content;
+    background: var(--card-bg, #fff);
+    padding: 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
 
 
