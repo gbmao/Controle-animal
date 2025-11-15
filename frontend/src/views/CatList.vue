@@ -1,25 +1,49 @@
 <template>
   <section>
-    <h2>Lista de Gatos</h2>
-    <button @click="listarGatos">Atualizar</button>
-
+    <h2>Gatos registrados:</h2>
+    
     <ul v-if="gatos.length">
+      
       <li v-for="gato in gatos" :key="gato.id">
-        {{ gato.name }} ({{ gato.age }} anos)
-        <button @click="deletarGato(gato.id)">🗑️</button>
-      </li>
-    </ul>
+  <baseCard>
 
-    <p v-else>Nenhum gato encontrado 😺</p>
+    <!-- Cabeçalho do gato (clique para expandir/fechar) -->
+    <div class="nome--gato--info" @click="toggleInfo(gato.id)">
+      {{ gato.name }}
+      <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
+    </div>
+
+    <!-- Conteúdo expandido -->
+    <div 
+      class="gato-detalhes"
+      v-show="aberto[gato.id]"
+    >
+      <p>Idade: {{ gato.age }}</p>
+      <button @click="deletarGato(gato.id)">🗑️ Deletar</button>
+    </div>
+
+  </baseCard>
+</li>
+      
+    </ul>
+    <p v-else>Nenhum gato encontrado</p>
   </section>
 </template>
 
 <script setup>
+import BaseCard from '@/components/BaseCard.vue'
+import SetaIcon from '@/components/SetaIcon.vue'
 import { ref, onMounted } from 'vue'
 
 const API_URL = import.meta.env.VITE_API_URL
 const API_KEY = import.meta.env.VITE_API_KEY
 const gatos = ref([])
+
+const aberto = ref({}) // controla quais IDs estão abertos
+
+function toggleInfo(id) {
+  aberto.value[id] = !aberto.value[id]
+}
 
 async function listarGatos() {
   try {

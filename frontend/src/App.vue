@@ -9,7 +9,7 @@
     </div>
 
     <div class="header__toggle">
-      <i
+      <i id="toggleTheme"
         :class="['bi', theme === 'dark' ? 'bi-moon' : 'bi-sun']"
         @click="toggleTheme"
       ></i>
@@ -19,14 +19,26 @@
   <main>
     <RouterView />
   </main>
+  <NavMenuMobile />
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import NavMenu from './components/NavMenu.vue'
+import NavMenuMobile from './components/NavMenuMobile.vue'
+
+// estado reativo para o tema
+const theme = ref('light')
+
+onMounted(() => {
+  const root = document.documentElement
+  theme.value = root.getAttribute('data-theme') || 'light'
+})
 
 function toggleTheme() {
   const root = document.documentElement
-  const current = root.getAttribute('data-theme')
-  root.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark')
+
+  theme.value = theme.value === 'dark' ? 'light' : 'dark'
+  root.setAttribute('data-theme', theme.value)
 }
 </script>
