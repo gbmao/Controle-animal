@@ -19,11 +19,13 @@
   <main>
     <RouterView />
   </main>
+  <NavMenuMobile />
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import NavMenu from './components/NavMenu.vue'
+import NavMenuMobile from './components/NavMenuMobile.vue'
 
 // estado reativo para o tema
 const theme = ref('light')
