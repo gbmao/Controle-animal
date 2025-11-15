@@ -2,28 +2,37 @@
   <section>
     <h2>Gatos registrados:</h2>
     
-    <ul v-if="gatos.length">
+    <ul class="cat--list" v-if="gatos.length">
       
       <li v-for="gato in gatos" :key="gato.id">
-  <baseCard>
+        <BaseCard>
 
-    <!-- Cabeçalho do gato (clique para expandir/fechar) -->
-    <div class="nome--gato--info" @click="toggleInfo(gato.id)">
-      {{ gato.name }}
-      <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
-    </div>
+          <!-- Cabeçalho do gato (clique para expandir/fechar) -->
+          <div class="nome--gato--info" @click="toggleInfo(gato.id)">
+            {{ gato.name }}
+            <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
+          </div>
 
-    <!-- Conteúdo expandido -->
-    <div 
-      class="gato-detalhes"
-      v-show="aberto[gato.id]"
-    >
-      <p>Idade: {{ gato.age }}</p>
-      <button @click="deletarGato(gato.id)">🗑️ Deletar</button>
-    </div>
+          <!-- Conteúdo expandido -->
+          <div 
+            class="gato-detalhes"
+            v-show="aberto[gato.id]"
+          >
+            <p>Idade: {{ gato.age }}</p>
+            <div class="delete--buton">
+              <button @click="deletarGato(gato.id)">
+                <BaseButton
+                  title="Deletar gato"
+                  icon="bi bi-trash3"
+                  variant="default"
+                  @click="buscar"
+                />
+              </button>
+            </div>
+          </div>
 
-  </baseCard>
-</li>
+        </BaseCard>
+      </li>
       
     </ul>
     <p v-else>Nenhum gato encontrado</p>
@@ -31,6 +40,7 @@
 </template>
 
 <script setup>
+import BaseButton from '@/components/BaseButton.vue'
 import BaseCard from '@/components/BaseCard.vue'
 import SetaIcon from '@/components/SetaIcon.vue'
 import { ref, onMounted } from 'vue'

@@ -2,30 +2,23 @@
     <nav class="nav--mobile">
         <ul class="menu menu--mobile">
         <li class="menu__item">
-            <RouterLink class="menu__link" to="/">
-            <i class="menu__icon bi bi-house-door"></i>
-            <span class="menu__text">Home</span>
+            <RouterLink class="menu__link" to="/listar">
+            <i class="menu__icon bi bi-list"></i>
+            <span class="menu__text">LISTAR</span>
             </RouterLink>
         </li>
 
         <li class="menu__item">
-            <RouterLink class="menu__link" to="/projetos">
-            <i class="menu__icon bi bi-window-stack"></i>
-            <span class="menu__text">Projetos</span>
+            <RouterLink class="menu__link" to="/buscar">
+            <i class="menu__icon bi bi-search"></i>
+            <span class="menu__text">BUSCAR</span>
             </RouterLink>
         </li>
 
         <li class="menu__item">
-        <RouterLink class="menu__link" to="/sobre">
-            <i class="menu__icon bi bi-person"></i>
-            <span class="menu__text">Sobre</span>
-            </RouterLink>
-        </li>
-
-        <li class="menu__item">
-            <RouterLink class="menu__link" to="/contato">
-            <i class="menu__icon bi bi-envelope"></i>
-            <span class="menu__text">Contato</span>
+        <RouterLink class="menu__link" to="/adicionar">
+            <i class="menu__icon bi bi-plus-lg"></i>
+            <span class="menu__text">ADICIONAR</span>
             </RouterLink>
         </li>
         </ul>
