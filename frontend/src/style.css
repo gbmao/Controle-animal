@@ -73,6 +73,11 @@ input::placeholder {
     padding: 5px;
 }
 
+button {
+    border: none;
+    background-color: transparent;
+}
+
 /* ===========================
     HEADER — Mobile First
 =========================== */
@@ -213,6 +218,7 @@ main {
     align-items: center;
     cursor: pointer;
     gap: 4rem;
+    padding: 0 0.5rem;
 }
 
 .nome--gato--info svg {
@@ -221,6 +227,46 @@ main {
 
 .rotacionado {
     transform: rotate(180deg);
+}
+
+.gato-detalhes {
+    display: flex;
+    flex-direction: column;
+    padding: 0 0.5rem;
+}
+
+.delete--buton {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+/* ===========================
+    BUSCAR GATO SECTION
+=========================== */
+
+.buscar--gato {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+/* ===========================
+    ADICIONAR GATO SECTION
+=========================== */
+
+.adicionar--gato {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.adicionar--button {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
 }
 
 /* ===========================

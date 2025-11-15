@@ -4,8 +4,8 @@
     
     <ul class="cat--list" v-if="gatos.length">
       
-      <li class="cat--list--item" v-for="gato in gatos" :key="gato.id">
-        <baseCard>
+      <li v-for="gato in gatos" :key="gato.id">
+        <BaseCard>
 
           <!-- Cabeçalho do gato (clique para expandir/fechar) -->
           <div class="nome--gato--info" @click="toggleInfo(gato.id)">
@@ -19,10 +19,19 @@
             v-show="aberto[gato.id]"
           >
             <p>Idade: {{ gato.age }}</p>
-            <button @click="deletarGato(gato.id)">🗑️ Deletar</button>
+            <div class="delete--buton">
+              <button @click="deletarGato(gato.id)">
+                <BaseButton
+                  title="Deletar gato"
+                  icon="bi bi-trash3"
+                  variant="default"
+                  @click="buscar"
+                />
+              </button>
+            </div>
           </div>
 
-        </baseCard>
+        </BaseCard>
       </li>
       
     </ul>
@@ -31,6 +40,7 @@
 </template>
 
 <script setup>
+import BaseButton from '@/components/BaseButton.vue'
 import BaseCard from '@/components/BaseCard.vue'
 import SetaIcon from '@/components/SetaIcon.vue'
 import { ref, onMounted } from 'vue'
