@@ -6,6 +6,7 @@ import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.repository.AnimalRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,15 @@ public class AnimalService {
      * @return O animal
      */
     public AnimalDto getAnimal(Long id) {
-        var animal = repo.findById(id).orElse(null);
+        var animal = repo.findById(id).orElseThrow( () ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Nao encontramos animal com o id: " + id));
+
+//        // checa se existe
+//        if (animal == null) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Animal not found");
+//
+//        }
+
         return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
     }
 
