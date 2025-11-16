@@ -31,6 +31,7 @@ defineProps({
   border-radius: 6px;
   cursor: pointer;
   font-family: inherit;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .base-button.default { background: #7A9590; color: #f5f5f5; }
