@@ -103,4 +103,15 @@ public class AnimalService {
         }
         return false;
     }
+
+    public Long getAnimalName(String name) {
+        var test = repo.findAll();
+
+        for (int i = 0; i < test.size(); i++) {
+            if (test.get(i).getName().equalsIgnoreCase(name)) {
+                return test.get(i).getId();
+            }
+        }
+        return null;
+    }
 }

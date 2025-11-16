@@ -43,6 +43,12 @@ public class Controller {
         return service.getAllAnimals();
     }
 
+    @GetMapping("teste/{name}")
+    public AnimalDto getNameAnimal(@PathVariable("name") String name) {
+        long id = service.getAnimalName(name);
+        return getAnimal(id);
+    }
+
 
     @PostMapping()
     public Animal addAnimal(@RequestHeader("x-api-key") String key, @RequestBody AnimalDto dto) {
