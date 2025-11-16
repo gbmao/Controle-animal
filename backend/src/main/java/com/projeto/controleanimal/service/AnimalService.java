@@ -104,14 +104,12 @@ public class AnimalService {
         return false;
     }
 
-    public Long getAnimalName(String name) {
-        var test = repo.findAll();
+    public Long getIdByName(String name) {
 
-        for (int i = 0; i < test.size(); i++) {
-            if (test.get(i).getName().equalsIgnoreCase(name)) {
-                return test.get(i).getId();
-            }
-        }
-        return null;
+        return repo.findAll().stream()
+                .filter(a -> a.getName().equalsIgnoreCase(name)) // TODO criar metodo no repository para enviar buscar a lista inteira
+                .findAny()
+                .map(Animal::getId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nome não encontrado"));
     }
 }

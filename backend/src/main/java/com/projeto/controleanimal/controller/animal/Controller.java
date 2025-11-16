@@ -43,10 +43,10 @@ public class Controller {
         return service.getAllAnimals();
     }
 
-    @GetMapping("teste/{name}")
-    public AnimalDto getNameAnimal(@PathVariable("name") String name) {
-        long id = service.getAnimalName(name);
-        return getAnimal(id);
+    @GetMapping("search/{name}")
+    public AnimalDto getAnimalByName(@PathVariable("name") String name) {
+
+        return getAnimal(service.getIdByName(name)); //TODO devolver um DTO com os dados requisitados
     }
 
 
