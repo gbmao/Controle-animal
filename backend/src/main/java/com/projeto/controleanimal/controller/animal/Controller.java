@@ -28,9 +28,9 @@ public class Controller {
 
     @GetMapping("/{id}")
     public AnimalDto getAnimal(@PathVariable("id") Long id) {
-        Animal animal = service.getAnimal(id);
-        return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
-
+//        Animal animal = service.getAnimal(id);
+//        return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
+        return service.getAnimal(id);
     }
 
     @GetMapping("/all")

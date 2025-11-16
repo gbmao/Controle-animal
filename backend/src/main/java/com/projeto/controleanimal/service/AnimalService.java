@@ -36,8 +36,9 @@ public class AnimalService {
      * @param id
      * @return O animal
      */
-    public Animal getAnimal(Long id) {
-        return repo.findById(id).orElse(null);
+    public AnimalDto getAnimal(Long id) {
+        var animal = repo.findById(id).orElse(null);
+        return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
     }
 
     public Animal addAnimal(AnimalDto animalDto) {
@@ -59,7 +60,7 @@ public class AnimalService {
     }
 
     public void deleteAnimal(Long id) {
-        repo.delete(getAnimal(id));
+        repo.deleteById(id);
         //colocar alguma msg avisando que foi deletado???
     }
 
