@@ -1,19 +1,29 @@
 <template>
   <section>
-    <h2>Adicionar Gato</h2>
-
-    <input v-model="novo.name" placeholder="Nome do gato" />
-    <input v-model.number="novo.age" type="number" placeholder="Idade" />
-    <button @click="adicionarGato">Adicionar</button>
+    <h2>Adicionar novo gato:</h2>
+    <div class="adicionar--gato">
+      <input v-model="novo.name" placeholder="Nome do gato" />
+      <input v-model.number="novo.age" type="number" placeholder="Idade do gato" />
+    
+      <div class="adicionar--button">
+        <button @click="adicionarGato">
+          <BaseButton
+            title="Adicionar novo gato"
+            icon="bi bi-plus-lg"
+          />
+        </button>
+      </div>
+    </div>
   </section>
 </template>
 
 <script setup>
+import BaseButton from '@/components/BaseButton.vue'
 import { ref } from 'vue'
 
 const API_URL = import.meta.env.VITE_API_URL
 const API_KEY = import.meta.env.VITE_API_KEY
-const novo = ref({ name: '', age: 0, type: 'Cat' })
+const novo = ref({ name: '', age: '', type: 'Cat' })
 
 async function adicionarGato() {
   if (!novo.value.name) {

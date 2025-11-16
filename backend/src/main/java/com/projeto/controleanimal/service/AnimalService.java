@@ -6,6 +6,7 @@ import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.repository.AnimalRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,8 +37,17 @@ public class AnimalService {
      * @param id
      * @return O animal
      */
-    public Animal getAnimal(Long id) {
-        return repo.findById(id).orElse(null);
+    public AnimalDto getAnimal(Long id) {
+        var animal = repo.findById(id).orElseThrow( () ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Nao encontramos animal com o id: " + id));
+
+//        // checa se existe
+//        if (animal == null) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Animal not found");
+//
+//        }
+
+        return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
     }
 
     public Animal addAnimal(AnimalDto animalDto) {
@@ -59,7 +69,7 @@ public class AnimalService {
     }
 
     public void deleteAnimal(Long id) {
-        repo.delete(getAnimal(id));
+        repo.deleteById(id);
         //colocar alguma msg avisando que foi deletado???
     }
 
@@ -92,5 +102,14 @@ public class AnimalService {
             if (a.getName().equalsIgnoreCase(name)) return true;
         }
         return false;
+    }
+
+    public Long getIdByName(String name) {
+
+        return repo.findAll().stream()
+                .filter(a -> a.getName().equalsIgnoreCase(name)) // TODO criar metodo no repository para enviar buscar a lista inteira
+                .findAny()
+                .map(Animal::getId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nome não encontrado"));
     }
 }
