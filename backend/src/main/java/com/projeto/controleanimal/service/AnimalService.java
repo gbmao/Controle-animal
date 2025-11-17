@@ -38,7 +38,7 @@ public class AnimalService {
      * @return O animal
      */
     public AnimalDto getAnimal(Long id) {
-        var animal = repo.findById(id).orElseThrow( () ->
+        var animal = repo.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Nao encontramos animal com o id: " + id));
 
 //        // checa se existe
@@ -115,5 +115,17 @@ public class AnimalService {
                 .findAny()
                 .map(Animal::getId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nome não encontrado"));
+    }
+
+    public List<AnimalDto> getListOfAnimals(String name) {
+        return repo.findAll().stream()
+                .filter(a -> a.getName().toLowerCase().contains(name.toLowerCase()))
+                .limit(10) // limitar para um numero maximo
+                .map(a -> new AnimalDto(a.getId(),
+                        a.getName(),
+                        a.getAge(),
+                        a.getClass().getSimpleName()))
+                .toList();
+
     }
 }

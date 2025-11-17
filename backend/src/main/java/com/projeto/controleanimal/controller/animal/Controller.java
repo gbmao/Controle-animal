@@ -82,4 +82,10 @@ public class Controller {
         return service.changeAnimal(animalId, animalDto);
     }
 
+    @GetMapping("/busca/{name}")
+    public List<AnimalDto> getListOfAnimals(@PathVariable String name) {
+
+        return service.getListOfAnimals(name);
+    }
+
 }
