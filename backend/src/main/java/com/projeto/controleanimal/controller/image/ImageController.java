@@ -24,6 +24,8 @@ public class ImageController {
     private final AnimalRepository animalRepository;
     private ImageService service;
 
+    private final String secret = System.getenv("API_SECRET");
+
 
     @Autowired
     public ImageController(ImageDpRepository imageDpRepository, AnimalRepository animalRepository, ImageService service) {
@@ -35,36 +37,12 @@ public class ImageController {
     //TODO exigir senha para postar imagem
     @PostMapping("/{animalId}")
     Long uploadImage(@RequestParam MultipartFile multipartImage,
-                     @PathVariable Long animalId) throws Exception {
+                     @PathVariable Long animalId,
+                     @RequestHeader("x-api-key") String key) throws Exception {
 
-//        //aqui instancio o animal baseado no id que recebo
-//        Animal animal = animalRepository.findById(animalId)
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Animal nao encontrado"));
-//
-//
-//
-//        Image dbImage = new Image();
-//        dbImage.setName(multipartImage.getOriginalFilename()); // nao sei bem como funciona existe a opcao de pegar com getName
-//        dbImage.setContent(multipartImage.getBytes());
-//        dbImage.setAnimal(animal); // aqui estou prendendo a imagem ao animal instanciado, aparentemente o cascade faz o restante
-//
-////        Image savedImage = imageDpRepository.save(dbImage);
-////
-////        animal.setImage(dbImage); // setando a imagem ao animal
-////        System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIIII");
-////        System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIIII");
-////        System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIIII");
-//////        System.out.println("CONTENT CLASS = " + dbImage.getAnimal().getId() + " :" + dbImage.getContent().getClass() + "  :" + dbImage.getName());
-////        System.out.println("CONTENT CLASS = " + dbImage.getContent().getClass());
-////
-////        System.out.println("ANIMAL ID  = " + animal.getId());
-////        System.out.println("IMAGE NAME = " + dbImage.getName());
-////        System.out.println("CONTENT LENGTH = " + dbImage.getContent().length);
-////        System.out.println("CONTENT CLASS = " + dbImage.getContent().getClass());
-//
-//
-////        Image savedImage = imageDpRepository.save(dbImage);
-//        Animal saved = animalRepository.save(animal); // salvando o animal ao banco de dados
+        if (!secret.equals(key)) { //TODO colocar isso em um metodo para ser chamado e evitar repeticao
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Não autorizado");
+        }
 
         return service.uploadImage(multipartImage, animalId);
     }
