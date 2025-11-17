@@ -69,7 +69,11 @@ public class AnimalService {
     }
 
     public void deleteAnimal(Long id) {
-        repo.deleteById(id);
+        Animal animal = repo.findById(id).orElseThrow();
+
+        animal.setImage(null);
+
+        repo.delete(animal);
         //colocar alguma msg avisando que foi deletado???
     }
 

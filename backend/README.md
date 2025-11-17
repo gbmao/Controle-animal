@@ -124,3 +124,117 @@ Código	Descrição
 401	Chave de API inválida
 404	Animal não encontrado
 500	Erro interno do servidor
+
+
+
+📘 Image API Documentation
+
+Base URL:
+```bash
+/images
+```
+
+📄 GET /images/all
+
+Retorna informações básicas de todas as imagens cadastradas.
+
+✔️ Response 200 —ok
+```json
+[
+  {
+    "animalId": 1,
+    "animalName": "Rex",
+    "imageId": 10
+  }
+]
+```
+
+
+❌ Erros
+
+Nenhum erro específico.
+
+📤 POST /images/{animalId}
+
+Faz upload de uma imagem para um animal.
+Se o animal já possui uma imagem, ela é substituída automaticamente.
+
+🔒 Authentication
+
+Necessita header:
+
+```css
+x-api-key: {your-secret}
+```
+
+📥 Request
+
+Path Param
+
+Nome	Tipo	Descrição
+animalId	Long	ID do animal
+
+Body — multipart/form-data
+
+Campo	Tipo	Obrigatório	Descrição
+multipartImage	File	✔️	Arquivo de imagem
+✔️ Response 200 — OK
+
+Retorna o ID da imagem criada.
+
+```json
+10
+```
+
+❌ Possible Errors
+Código	Motivo
+401 Unauthorized	API key inválida
+404 Not Found	Animal não encontrado
+📥 GET /images/{id}
+
+Faz o download da imagem pelo ID.
+
+📥 Request
+
+Path Param
+
+Nome	Tipo	Descrição
+id	Long	ID da imagem
+✔️ Response 200 — OK
+
+Retorna um binário JPEG.
+
+Headers:
+```arduino
+Content-Type: image/jpeg
+```
+
+❌ Errors
+Código	Motivo
+404 Not Found	Imagem não encontrada
+🗑️ DELETE /images/{animalId}
+
+Remove a associação de imagem de um animal.
+
+A imagem não é deletada da tabela, apenas removida do animal.
+
+🔒 Authentication
+
+Necessita:
+```css
+x-api-key: {your-secret}
+```
+📥 Request
+
+Path Param
+
+Nome	Tipo	Descrição
+animalId	Long	ID do animal
+✔️ Response 204 — No Content
+
+Sem retorno.
+
+❌ Errors
+Código	Motivo
+401 Unauthorized	API key inválida
+404 Not Found	Animal não encontrado
