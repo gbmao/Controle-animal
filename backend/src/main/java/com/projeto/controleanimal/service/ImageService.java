@@ -50,6 +50,7 @@ public class ImageService {
                 .toList();
     }
 
+    //toda a logica de instanciar o animal aqui me parece fora da responsabilidade do ImageService
     public void deleteImg(Long animalId) {
         Animal animal = animalRepository.findById(animalId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nao existe ese animal"));
