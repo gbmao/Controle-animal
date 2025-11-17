@@ -1,5 +1,6 @@
 package com.projeto.controleanimal.controller.image;
 
+import com.projeto.controleanimal.dto.imageDto.ImageInfoDto;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.repository.AnimalRepository;
 import com.projeto.controleanimal.repository.ImageDpRepository;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.projeto.controleanimal.model.Image;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/images")
@@ -32,6 +35,12 @@ public class ImageController {
         this.imageDpRepository = imageDpRepository;
         this.animalRepository = animalRepository;
         this.service = service;
+    }
+
+    @GetMapping("/all")
+    List<ImageInfoDto> getAllImgInfo() {
+
+        return service.getAllImgInfo();
     }
 
     //TODO exigir senha para postar imagem

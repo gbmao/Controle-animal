@@ -1,5 +1,6 @@
 package com.projeto.controleanimal.service;
 
+import com.projeto.controleanimal.dto.imageDto.ImageInfoDto;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Image;
 import com.projeto.controleanimal.repository.AnimalRepository;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class ImageService {
@@ -39,4 +41,15 @@ public class ImageService {
 
         return saved.getImage().getId();
     }
+
+    public List<ImageInfoDto> getAllImgInfo() {
+
+        return imageDpRepository.findAll().stream()
+                .map(img -> new ImageInfoDto(
+                        img.getAnimal().getId(),
+                        img.getAnimal().getName(),
+                        img.getId()))
+                .toList();
+    }
+
 }
