@@ -3,6 +3,7 @@ package com.projeto.controleanimal.controller.image;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.repository.AnimalRepository;
 import com.projeto.controleanimal.repository.ImageDpRepository;
+import com.projeto.controleanimal.service.ImageService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -21,12 +22,14 @@ public class ImageController {
 
     private final ImageDpRepository imageDpRepository;
     private final AnimalRepository animalRepository;
+    private ImageService service;
 
 
     @Autowired
-    public ImageController(ImageDpRepository imageDpRepository, AnimalRepository animalRepository) {
+    public ImageController(ImageDpRepository imageDpRepository, AnimalRepository animalRepository, ImageService service) {
         this.imageDpRepository = imageDpRepository;
         this.animalRepository = animalRepository;
+        this.service = service;
     }
 
     //TODO exigir senha para postar imagem
@@ -34,36 +37,36 @@ public class ImageController {
     Long uploadImage(@RequestParam MultipartFile multipartImage,
                      @PathVariable Long animalId) throws Exception {
 
-        //aqui instancio o animal baseado no id que recebo
-        Animal animal = animalRepository.findById(animalId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Animal nao encontrado"));
+//        //aqui instancio o animal baseado no id que recebo
+//        Animal animal = animalRepository.findById(animalId)
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Animal nao encontrado"));
+//
+//
+//
+//        Image dbImage = new Image();
+//        dbImage.setName(multipartImage.getOriginalFilename()); // nao sei bem como funciona existe a opcao de pegar com getName
+//        dbImage.setContent(multipartImage.getBytes());
+//        dbImage.setAnimal(animal); // aqui estou prendendo a imagem ao animal instanciado, aparentemente o cascade faz o restante
+//
+////        Image savedImage = imageDpRepository.save(dbImage);
+////
+////        animal.setImage(dbImage); // setando a imagem ao animal
+////        System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIIII");
+////        System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIIII");
+////        System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIIII");
+//////        System.out.println("CONTENT CLASS = " + dbImage.getAnimal().getId() + " :" + dbImage.getContent().getClass() + "  :" + dbImage.getName());
+////        System.out.println("CONTENT CLASS = " + dbImage.getContent().getClass());
+////
+////        System.out.println("ANIMAL ID  = " + animal.getId());
+////        System.out.println("IMAGE NAME = " + dbImage.getName());
+////        System.out.println("CONTENT LENGTH = " + dbImage.getContent().length);
+////        System.out.println("CONTENT CLASS = " + dbImage.getContent().getClass());
+//
+//
+////        Image savedImage = imageDpRepository.save(dbImage);
+//        Animal saved = animalRepository.save(animal); // salvando o animal ao banco de dados
 
-
-
-        Image dbImage = new Image();
-        dbImage.setName(multipartImage.getOriginalFilename()); // nao sei bem como funciona existe a opcao de pegar com getName
-        dbImage.setContent(multipartImage.getBytes());
-        dbImage.setAnimal(animal); // aqui estou prendendo a imagem ao animal instanciado, aparentemente o cascade faz o restante
-
-//        Image savedImage = imageDpRepository.save(dbImage);
-
-        animal.setImage(dbImage); // setando a imagem ao animal
-        System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIIII");
-        System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIIII");
-        System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIIII");
-//        System.out.println("CONTENT CLASS = " + dbImage.getAnimal().getId() + " :" + dbImage.getContent().getClass() + "  :" + dbImage.getName());
-        System.out.println("CONTENT CLASS = " + dbImage.getContent().getClass());
-
-        System.out.println("ANIMAL ID  = " + animal.getId());
-        System.out.println("IMAGE NAME = " + dbImage.getName());
-        System.out.println("CONTENT LENGTH = " + dbImage.getContent().length);
-        System.out.println("CONTENT CLASS = " + dbImage.getContent().getClass());
-
-
-//        Image savedImage = imageDpRepository.save(dbImage);
-        Animal saved = animalRepository.save(animal); // salvando o animal ao banco de dados
-
-        return saved.getImage().getId();
+        return service.uploadImage(multipartImage, animalId);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
