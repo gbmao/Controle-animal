@@ -5,6 +5,7 @@ import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.service.AnimalService;
+import jakarta.annotation.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

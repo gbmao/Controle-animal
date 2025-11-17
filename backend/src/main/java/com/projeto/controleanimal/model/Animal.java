@@ -13,6 +13,9 @@ public abstract class Animal { //removido o abstract para teste do postqgre
     private String name;
     private int age;
 
+    @OneToOne(mappedBy = "animal",cascade = CascadeType.ALL, orphanRemoval = true)
+    private Image image;
+
     public Animal() {
     }
 
@@ -46,5 +49,14 @@ public abstract class Animal { //removido o abstract para teste do postqgre
 
     public Long getId() {
         return id;
+    }
+
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
     }
 }
