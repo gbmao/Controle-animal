@@ -16,6 +16,10 @@ public abstract class Animal { //removido o abstract para teste do postqgre
     @OneToOne(mappedBy = "animal",cascade = CascadeType.ALL, orphanRemoval = true)
     private Image image;
 
+
+    @Version
+    private Long version;
+
     public Animal() {
     }
 
@@ -58,5 +62,13 @@ public abstract class Animal { //removido o abstract para teste do postqgre
 
     public void setImage(Image image) {
         this.image = image;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }
