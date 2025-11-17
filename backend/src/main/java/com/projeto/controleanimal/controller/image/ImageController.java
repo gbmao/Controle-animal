@@ -43,7 +43,10 @@ public class ImageController {
         return service.getAllImgInfo();
     }
 
-    //TODO exigir senha para postar imagem
+
+
+    // post automaticamente deleta a imagem antiga e faz upload da nova
+
     @PostMapping("/{animalId}")
     Long uploadImage(@RequestParam MultipartFile multipartImage,
                      @PathVariable Long animalId,
@@ -57,15 +60,8 @@ public class ImageController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-//    Resource downloadImage(@PathVariable Long id) {
-//        byte[] image = imageDpRepository.findById(id)
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
-//                .getContent();
-//
-//        return new ByteArrayResource(image);
-//    }
     public ResponseEntity<ByteArrayResource> downloadImage(@PathVariable Long id) {
-
+        //TODO mover tudo isso para service
         byte[] imageBytes = imageDpRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
                 .getContent();
@@ -78,6 +74,18 @@ public class ImageController {
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(resource);
     }
+
+    @DeleteMapping("/{animalId}")
+    void deleteImage(@PathVariable Long animalId,
+                     @RequestHeader("x-api-key")String key) {
+        if (!secret.equals(key)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Não autorizado");
+        }
+
+         service.deleteImg(animalId);
+    }
+
+
 }
 
 
