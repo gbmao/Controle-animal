@@ -50,7 +50,7 @@ async function parseResponse(res) {
 async function buscarGato() {
   if (!busca.value.trim()) return
   try {
-    const url = `${API_URL}/search?name=${encodeURIComponent(busca.value)}`
+    const url = `${API_URL}/search/${encodeURIComponent(busca.value)}`
     const resposta = await fetch(url, {
       headers: { 'x-api-key': API_KEY },
     })
@@ -88,7 +88,7 @@ async function buscarSugestoes() {
   }
 
   try {
-    const url = `${API_URL}/search?name=${encodeURIComponent(busca.value)}`
+    const url = `${API_URL}/search/${encodeURIComponent(busca.value)}`
     const resposta = await fetch(url, { headers: { 'x-api-key': API_KEY } })
     const parsed = await parseResponse(resposta)
 
