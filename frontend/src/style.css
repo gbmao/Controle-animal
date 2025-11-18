@@ -36,6 +36,12 @@ body {
     min-height: 100vh;
 }
 
+section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 a {
     text-decoration: none;
     color: var(--text-header);
@@ -65,8 +71,9 @@ label {
 input {
     border: none;
     min-height: 2.5rem;
-    border-radius: 4px;
-    padding: 5px;
+    border-radius: 10px;
+    padding: 0.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 input::placeholder {
@@ -114,7 +121,7 @@ button {
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-    padding: 0.1rem 1rem;
+    padding: 0.7rem 1rem;
 }
 
 .menu__link {
@@ -155,6 +162,7 @@ main {
     display: flex;
     justify-content: center;
     padding: 1rem;
+    gap: 1rem;
 }
 
 #adicionarSection {
