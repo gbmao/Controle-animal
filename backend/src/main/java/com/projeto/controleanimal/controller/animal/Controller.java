@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class Controller {
     private final AnimalService service;
 
@@ -60,8 +60,6 @@ public class Controller {
         return service.addAnimal(dto);
     }
 
-    // Necessario chamar name como parametro para deletar!
-    //ex: http://localhost:8080/api/remove?name=Ivaldo
 
     @DeleteMapping("/{id}")
     public void deleteAnimal(@RequestHeader("x-api-key") String key, @PathVariable("id") Long id) {

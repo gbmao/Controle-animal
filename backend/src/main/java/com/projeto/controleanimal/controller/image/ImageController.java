@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/images")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class ImageController {
 
     private final ImageDpRepository imageDpRepository;
