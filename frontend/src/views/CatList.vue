@@ -60,7 +60,7 @@ function toggleInfo(id) {
 
 async function listarGatos() {
   try {
-    const resposta = await fetch(`${API_URL}/all`, {
+    const resposta = await fetch(`${API_URL}/api/all`, {
       headers: { 'x-api-key': API_KEY },
     })
     gatos.value = await resposta.json()

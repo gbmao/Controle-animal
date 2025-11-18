@@ -8,7 +8,9 @@
     <script setup>
     import { ref } from "vue"
 
+    const API_URL = import.meta.env.VITE_API_URL
     const API_KEY = import.meta.env.VITE_API_KEY
+
     const selectedFile = ref(null)
 
     function handleFile(event) {
@@ -26,12 +28,11 @@
 
     try {
         const resp = await fetch(
-        "https://controle-animal-production.up.railway.app/images/20",
+        `${API_URL}/images/${animalId}`,
         {
             method: "POST",
             headers: {
             "x-api-key": API_KEY,
-            // NÃO coloque 'Content-Type' aqui!
             },
             body: formData,
         }
