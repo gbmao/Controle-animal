@@ -1,6 +1,8 @@
 <template>
   <section>
     <h2>Gatos registrados:</h2>
+
+    <CatPics/>
     
     <ul class="cat--list" v-if="gatos.length">
       
@@ -43,6 +45,7 @@
 import BaseButton from '@/components/BaseButton.vue'
 import BaseCard from '@/components/BaseCard.vue'
 import SetaIcon from '@/components/SetaIcon.vue'
+import CatPics from '@/components/CatPics.vue'
 import { ref, onMounted } from 'vue'
 
 const API_URL = import.meta.env.VITE_API_URL

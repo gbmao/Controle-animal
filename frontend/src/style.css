@@ -206,6 +206,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
+    margin: 1rem;
 }
 
 .item--lista--registrados {
