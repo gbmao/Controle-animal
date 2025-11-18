@@ -63,6 +63,12 @@ h2 {
     font-size: 20px;
 }
 
+h3 {
+    font-weight: 400;
+    font-size: 16px;
+    text-transform: capitalize
+}
+
 label {
     font-family: "Montserrat", sans-serif;
     color: var(--header-bg);
@@ -479,7 +485,6 @@ main {
 .base-card {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
     min-width: fit-content;
     background: var(--card-bg, #fff);
     padding: 1.2rem;

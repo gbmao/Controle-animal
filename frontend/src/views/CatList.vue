@@ -9,7 +9,7 @@
 
           <!-- Cabeçalho do gato (clique para expandir/fechar) -->
           <div class="nome--gato--info" @click="toggleInfo(gato.id)">
-            {{ gato.name }}
+            <h3>{{ gato.name }}</h3>
             <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
           </div>
 
