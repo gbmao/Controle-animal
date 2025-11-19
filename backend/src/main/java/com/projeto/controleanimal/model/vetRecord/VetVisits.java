@@ -8,6 +8,6 @@ public record VetVisits(String vetName,
                         LocalDate visitDate,
                         String procedure,
                         String notes,
-                        double weight,
+                        Double weight,
                         LocalDate nextVisit) {
 }

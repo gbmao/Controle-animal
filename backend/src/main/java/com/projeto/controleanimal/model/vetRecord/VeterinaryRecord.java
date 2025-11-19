@@ -1,6 +1,7 @@
 package com.projeto.controleanimal.model.vetRecord;
 
 import com.projeto.controleanimal.dto.veterinaryRecordDto.NextVisitDto;
+import com.projeto.controleanimal.dto.veterinaryRecordDto.VetVisitDto;
 import com.projeto.controleanimal.model.Animal;
 import jakarta.persistence.*;
 
@@ -48,5 +49,13 @@ public class VeterinaryRecord {
         this.vetVisitsList = vetVisitsList;
     }
 
+    public VetVisits createVetVisit(VetVisits vetVisits) {
 
+        vetVisitsList.add(vetVisits);
+        return  vetVisits;
+    }
+
+    public Long getId() {
+        return id;
+    }
 }

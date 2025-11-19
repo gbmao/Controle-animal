@@ -1,12 +1,13 @@
 package com.projeto.controleanimal.controller.animal.veterinaryRecord;
 
 import com.projeto.controleanimal.dto.veterinaryRecordDto.NextVisitDto;
+import com.projeto.controleanimal.dto.veterinaryRecordDto.VetVisitDto;
+import com.projeto.controleanimal.dto.veterinaryRecordDto.VetVisitReturnDto;
+import com.projeto.controleanimal.dto.veterinaryRecordDto.VeterinaryRecordDto;
+import com.projeto.controleanimal.model.vetRecord.VetVisits;
 import com.projeto.controleanimal.service.AnimalService;
 import com.projeto.controleanimal.service.VeterinaryRecordService;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/{idAnimal}/veterinary-record")
@@ -19,8 +20,14 @@ public class VeterinaryRecordController {
     }
 
     @PostMapping()
-    NextVisitDto createVeterinaryRecord(@PathVariable("idAnimal") Long idAnimal) {
+    VeterinaryRecordDto createVeterinaryRecord(@PathVariable("idAnimal") Long idAnimal) {
 
         return veterinaryRecordService.createVeterinaryRecord(idAnimal);
+    }
+
+    @PostMapping("/vet-visit")
+    VetVisitReturnDto createVetVisit(@PathVariable("idAnimal") Long idAnimal,
+                                     @RequestBody VetVisitDto vetVisitDto) {
+        return veterinaryRecordService.createVetVisit(vetVisitDto, idAnimal);
     }
 }
