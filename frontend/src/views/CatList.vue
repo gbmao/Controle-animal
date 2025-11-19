@@ -1,6 +1,8 @@
 <template>
   <section>
     <h2>Gatos registrados:</h2>
+
+    <CatPics/>
     
     <ul class="cat--list" v-if="gatos.length">
       
@@ -9,7 +11,7 @@
 
           <!-- Cabeçalho do gato (clique para expandir/fechar) -->
           <div class="nome--gato--info" @click="toggleInfo(gato.id)">
-            {{ gato.name }}
+            <h3>{{ gato.name }}</h3>
             <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
           </div>
 
@@ -43,6 +45,7 @@
 import BaseButton from '@/components/BaseButton.vue'
 import BaseCard from '@/components/BaseCard.vue'
 import SetaIcon from '@/components/SetaIcon.vue'
+import CatPics from '@/components/CatPics.vue'
 import { ref, onMounted } from 'vue'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -57,7 +60,7 @@ function toggleInfo(id) {
 
 async function listarGatos() {
   try {
-    const resposta = await fetch(`${API_URL}/all`, {
+    const resposta = await fetch(`${API_URL}/api/all`, {
       headers: { 'x-api-key': API_KEY },
     })
     gatos.value = await resposta.json()

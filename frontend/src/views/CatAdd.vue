@@ -32,7 +32,7 @@ async function adicionarGato() {
   }
 
   try {
-    const resposta = await fetch(`${API_URL}`, {
+    const resposta = await fetch(`${API_URL}/api`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
