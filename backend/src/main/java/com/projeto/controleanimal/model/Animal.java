@@ -1,5 +1,6 @@
 package com.projeto.controleanimal.model;
 
+import com.projeto.controleanimal.model.vetRecord.VeterinaryRecord;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,6 +17,8 @@ public abstract class Animal { //removido o abstract para teste do postqgre
     @OneToOne(mappedBy = "animal",cascade = CascadeType.ALL, orphanRemoval = true)
     private Image image;
 
+    @OneToOne(mappedBy = "animal",cascade = CascadeType.ALL, orphanRemoval = true)
+    private VeterinaryRecord veterinaryRecord;
 
     @Version
     private Long version;
@@ -70,5 +73,13 @@ public abstract class Animal { //removido o abstract para teste do postqgre
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public VeterinaryRecord getVeterinaryRecord() {
+        return veterinaryRecord;
+    }
+
+    public void setVeterinaryRecord(VeterinaryRecord veterinaryRecord) {
+        this.veterinaryRecord = veterinaryRecord;
     }
 }
