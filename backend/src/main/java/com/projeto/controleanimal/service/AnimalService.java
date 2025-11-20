@@ -3,15 +3,20 @@ package com.projeto.controleanimal.service;
 import com.projeto.controleanimal.database.Db;
 import com.projeto.controleanimal.dto.AnimalDto;
 import com.projeto.controleanimal.dto.AnimalUpdateDto;
+import com.projeto.controleanimal.dto.AnimalWithImgDto;
+import com.projeto.controleanimal.dto.AnimalWithImgReturnDto;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
+import com.projeto.controleanimal.model.Image;
 import com.projeto.controleanimal.repository.AnimalRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -50,7 +55,7 @@ public class AnimalService {
         return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
     }
 
-    public Animal addAnimal(AnimalDto animalDto) {
+    public AnimalWithImgReturnDto addAnimal(AnimalDto animalDto) {
 
         if (containsName(animalDto.name())) {
             throw new IllegalArgumentException("Já existe esse nome na lista");
@@ -65,7 +70,39 @@ public class AnimalService {
         };
 
         repo.save(animal);
-        return animal;
+        return new  AnimalWithImgReturnDto(animal.getId(), animal.getName(),
+                animal.getAge(),
+                animal.getClass().getSimpleName(),
+                null);
+    }
+
+    public AnimalWithImgReturnDto addAnimal(AnimalDto animalDto, MultipartFile multipartImage) throws Exception {
+
+        if (containsName(animalDto.name())) {
+            throw new IllegalArgumentException("Já existe esse nome na lista");
+        }
+        //pega número negativo em age
+        if (animalDto.age() < 0) throw new IllegalArgumentException(" número negativo");
+
+        Animal animal = switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
+            case "cat" -> new Cat(animalDto.name(), animalDto.age());
+            default ->
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo invalido"); // TODO criar uma classe generica para aceitar quando vier null
+        };
+
+
+        //criando a img
+
+        Image dbImage = new Image();
+        dbImage.setName(multipartImage.getOriginalFilename()); // nao sei bem como funciona existe a opcao de pegar com getName
+        dbImage.setContent(multipartImage.getBytes());
+        dbImage.setAnimal(animal);
+
+        animal.setImage(dbImage);
+
+        repo.save(animal);
+        return new AnimalWithImgReturnDto(animal.getId(), animal.getName(),animal.getAge(),animal.getClass().getSimpleName(),
+                animal.getImage().getId());
     }
 
     public void deleteAnimal(Long id) {

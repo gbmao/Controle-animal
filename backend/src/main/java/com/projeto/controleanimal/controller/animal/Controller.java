@@ -2,13 +2,17 @@ package com.projeto.controleanimal.controller.animal;
 
 import com.projeto.controleanimal.dto.AnimalDto;
 import com.projeto.controleanimal.dto.AnimalUpdateDto;
+import com.projeto.controleanimal.dto.AnimalWithImgDto;
+import com.projeto.controleanimal.dto.AnimalWithImgReturnDto;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.service.AnimalService;
 import jakarta.annotation.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -51,13 +55,19 @@ public class Controller {
     }
 
 
-    @PostMapping()
-    public Animal addAnimal(@RequestHeader("x-api-key") String key, @RequestBody AnimalDto dto) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public AnimalWithImgReturnDto addAnimal(@RequestHeader("x-api-key") String key,
+                                            @RequestPart("data") AnimalDto dto,
+                                            @RequestParam("multipartImage") MultipartFile multipartImage) throws Exception {
 
         if (!secret.equals(key)) { //TODO colocar isso em um metodo para ser chamado e evitar repeticao
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Não autorizado");
         }
-        return service.addAnimal(dto);
+
+        if(multipartImage.isEmpty()) {
+            return  service.addAnimal(dto);
+        }
+        return service.addAnimal(dto, multipartImage);
     }
 
 
