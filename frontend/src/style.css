@@ -257,6 +257,20 @@ main {
 }
 
 /* ===========================
+    FOTOS DOS GATOS
+=========================== */
+
+.cat--pics {
+    display: flex;
+    width: 100%;
+    max-width: 80px;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 50%;
+    
+}
+
+/* ===========================
     BUSCAR GATO SECTION
 =========================== */
 
