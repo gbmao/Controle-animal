@@ -12,6 +12,7 @@
             icon="bi bi-plus-lg"
           />
         </button>
+        <CatPics v-if="animalId" :animalId="animalId" />
       </div>
     </div>
   </section>
@@ -20,10 +21,13 @@
 <script setup>
 import BaseButton from '@/components/BaseButton.vue'
 import { ref } from 'vue'
+import CatPics from '@/components/CatPics.vue'
 
 const API_URL = import.meta.env.VITE_API_URL
 const API_KEY = import.meta.env.VITE_API_KEY
-const novo = ref({ name: '', age: '', type: 'Cat' })
+
+const novo = ref({ name: '', age: 0, type: 'Cat' })
+const animalId = ref(null)
 
 async function adicionarGato() {
   if (!novo.value.name) {
@@ -36,16 +40,24 @@ async function adicionarGato() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': API_KEY,
+        'x-api-key': API_KEY
       },
-      body: JSON.stringify(novo.value),
+      body: JSON.stringify(novo.value)
     })
 
-    if (!resposta.ok) throw new Error('Erro ao adicionar gato')
+    if (!resposta.ok) {
+      throw new Error(`Erro ao adicionar gato (${resposta.status})`)
+    }
+
+    const gatoCriado = await resposta.json()
+
+    // salva o id real para o componente CatPics
+    animalId.value = gatoCriado.id
 
     alert('Gato adicionado!')
-    novo.value = { name: '', age: 0, type: 'Cat'}
+    novo.value = { name: '', age: 0, type: 'Cat' }
   } catch (err) {
+    console.error(err)
     alert(err.message)
   }
 }

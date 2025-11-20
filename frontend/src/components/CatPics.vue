@@ -8,45 +8,44 @@
     <script setup>
     import { ref } from "vue"
 
+    const props = defineProps({
+    animalId: {
+        type: Number
+    }
+    })
+
     const API_URL = import.meta.env.VITE_API_URL
     const API_KEY = import.meta.env.VITE_API_KEY
 
     const selectedFile = ref(null)
 
-    function handleFile(event) {
-    selectedFile.value = event.target.files[0]
+    function handleFile(e) {
+    selectedFile.value = e.target.files[0]
     }
 
     async function uploadImage() {
     if (!selectedFile.value) {
-        alert("Selecione uma imagem!")
+        alert("Selecione uma imagem antes!")
         return
     }
 
     const formData = new FormData()
-    formData.append("multipartImage", selectedFile.value) // ajuste o nome se necessário
+    formData.append("multipartImage", selectedFile.value)
 
-    try {
-        const resp = await fetch(
-        `${API_URL}/images/${animalId}`,
-        {
-            method: "POST",
-            headers: {
-            "x-api-key": API_KEY,
-            },
-            body: formData,
-        }
-        )
-        const data = await resp.json().catch(() => ({}))
-        if (resp.ok) {
-        console.log("Upload OK! Imagem ID:", data)
-        } else {
-        console.error("Erro no upload", data)
-        alert(data?.message || "Erro no upload")
-        }
-    } catch (e) {
-        console.error("Erro de rede:", e)
-        alert("Erro de rede")
+    const resposta = await fetch(`${API_URL}/images/${props.animalId}`, {
+        method: "POST",
+        headers: {
+        "x-api-key": API_KEY
+        },
+        body: formData
+    })
+
+    if (!resposta.ok) {
+        console.error("Erro ao enviar imagem")
+        return
     }
+
+    const imageId = await resposta.json()
+    console.log("Imagem enviada. ID:", imageId)
     }
     </script>

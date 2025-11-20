@@ -3,12 +3,11 @@
     <h2>Buscar por gato:</h2>
     <div class="buscar--gato">
       <input v-model="busca" placeholder="Digite o nome do gato" />
-      <button @click="buscarGato">
         <BaseButton
+          @click="buscarGato"
           title="Buscar gato"
           icon="bi bi-search"
         />
-      </button>
     </div>
 
     <ul v-if="resultado.length">
