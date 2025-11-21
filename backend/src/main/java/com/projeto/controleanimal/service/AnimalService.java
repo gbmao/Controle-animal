@@ -1,22 +1,17 @@
 package com.projeto.controleanimal.service;
 
-import com.projeto.controleanimal.database.Db;
 import com.projeto.controleanimal.dto.AnimalDto;
 import com.projeto.controleanimal.dto.AnimalUpdateDto;
-import com.projeto.controleanimal.dto.AnimalWithImgDto;
-import com.projeto.controleanimal.dto.AnimalWithImgReturnDto;
+import com.projeto.controleanimal.dto.AnimalWithImgIdReturnDto;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.model.Image;
 import com.projeto.controleanimal.repository.AnimalRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -29,9 +24,13 @@ public class AnimalService {
         this.repo = repo;
     }
 
-    public List<AnimalDto> getAllAnimals() {
+    public List<AnimalWithImgIdReturnDto> getAllAnimals() {
         return repo.findAll().stream()
-                .map(s -> new AnimalDto(s.getId(), s.getName(), s.getAge(), s.getClass().getSimpleName()))
+                .map(s -> new AnimalWithImgIdReturnDto(s.getId(),
+                        s.getName(),
+                        s.getAge(),
+                        s.getClass().getSimpleName()
+                ,s.getImage() ==null ? -1 : s.getImage().getId()))
                 .toList();
     }
 
@@ -55,7 +54,7 @@ public class AnimalService {
         return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
     }
 
-    public AnimalWithImgReturnDto addAnimal(AnimalDto animalDto) {
+    public AnimalWithImgIdReturnDto addAnimal(AnimalDto animalDto) {
 
         if (containsName(animalDto.name())) {
             throw new IllegalArgumentException("Já existe esse nome na lista");
@@ -70,13 +69,13 @@ public class AnimalService {
         };
 
         repo.save(animal);
-        return new  AnimalWithImgReturnDto(animal.getId(), animal.getName(),
+        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),
                 animal.getAge(),
                 animal.getClass().getSimpleName(),
                 null);
     }
 
-    public AnimalWithImgReturnDto addAnimal(AnimalDto animalDto, MultipartFile multipartImage) throws Exception {
+    public AnimalWithImgIdReturnDto addAnimal(AnimalDto animalDto, MultipartFile multipartImage) throws Exception {
 
         if (containsName(animalDto.name())) {
             throw new IllegalArgumentException("Já existe esse nome na lista");
@@ -101,7 +100,7 @@ public class AnimalService {
         animal.setImage(dbImage);
 
         repo.save(animal);
-        return new AnimalWithImgReturnDto(animal.getId(), animal.getName(),animal.getAge(),animal.getClass().getSimpleName(),
+        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),animal.getAge(),animal.getClass().getSimpleName(),
                 animal.getImage().getId());
     }
 
