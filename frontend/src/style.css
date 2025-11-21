@@ -282,14 +282,13 @@ main {
 .file-label {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     background-color: #6b8e8b;
     color: white;
     border-radius: 10px;
-    padding: 10px;
+    padding: 8px;
     cursor: pointer;
-    display: inline-block;
     transition: 0.2s;
 }
 
