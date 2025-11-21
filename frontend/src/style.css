@@ -40,6 +40,7 @@ section {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    padding-bottom: 90px;
 }
 
 a {
@@ -89,6 +90,11 @@ input::placeholder {
 button {
     border: none;
     background-color: transparent;
+}
+
+.icon svg {
+    width: 16px;
+    height: 16px;
 }
 
 /* ===========================
@@ -262,7 +268,6 @@ main {
 
 .adicionar--foto {
     display: flex;
-    
 }
 
 .cat--pics {
@@ -271,32 +276,39 @@ main {
     max-width: 80px;
     aspect-ratio: 1/1;
     object-fit: cover;
-    border-radius: 50%;
-    
+    border-radius: 50%; 
 }
 
 .file-label {
-  background-color: #6b8e8b;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  display: inline-block;
-  font-weight: 600;
-  transition: 0.2s;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #6b8e8b;
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    display: inline-block;
+    transition: 0.2s;
 }
 
 .file-label:hover {
-  background-color: #557a76;
+    background-color: #557a76;
+}
+
+.file-upload {
+    display: flex;
+    flex-direction: column;
 }
 
 .preview img {
-  margin-top: 10px;
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 10px;
-  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    margin-top: 10px;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
 }
 
 /* ===========================

@@ -36,6 +36,10 @@ defineProps({
 
 .base-button.default { background: #7A9590; color: #f5f5f5; }
 
+.base-button:hover {
+  background-color: #557a76;
+}
+
 .icon svg {
   width: 16px;
   height: 16px;

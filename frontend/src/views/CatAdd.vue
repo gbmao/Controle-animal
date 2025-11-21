@@ -2,11 +2,15 @@
   <section>
     <h2>Adicionar novo gato:</h2>
     <div class="adicionar--gato">
+      <label>Nome:</label>
       <input v-model="animal.name" placeholder="Nome do gato" />
-      <input v-model.number="animal.age" type="number" placeholder="Idade do gato" />
+      <label>Data de nascimento:</label>
+      <input v-model="animal.birthDate" type="date" placeholder="Data de nascimento do gato" />
       <div class="file-upload">
-        <label class="file-label">
-          Selecionar foto
+        <label for="">Adicione uma foto: </label>
+        <label class="file-label"> 
+          <span>Selecionar foto </span>
+          <i class="bi bi-image"></i>
           <input type="file" @change="handleFile" accept="image/*" hidden />
         </label>
 
@@ -35,9 +39,23 @@ const API_KEY = import.meta.env.VITE_API_KEY
 
 const animal = ref({
   name: "",
-  age: 0, 
+  birthDate: "", 
   type: 'Cat'
 });
+
+function calcularIdade(dateString) {
+  const hoje = new Date();
+  const nasc = new Date(dateString);
+
+  let idade = hoje.getFullYear() - nasc.getFullYear();
+  const m = hoje.getMonth() - nasc.getMonth();
+
+  if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())){
+    idade--;
+  }
+
+  return idade;
+}
 
 const imagem = ref(null);
 const preview = ref(null);
@@ -51,6 +69,8 @@ function handleFile(event) {
 
 async function salvar() {
   try {
+    animal.value.age = calcularIdade(animal.value.birthDate);
+
     const res = await adicionarAnimal(animal.value, imagem.value);
     console.log("Retorno:", res);
   } catch (e) {
