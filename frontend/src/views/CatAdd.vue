@@ -2,17 +2,25 @@
   <section>
     <h2>Adicionar novo gato:</h2>
     <div class="adicionar--gato">
-      <input v-model="novo.name" placeholder="Nome do gato" />
-      <input v-model.number="novo.age" type="number" placeholder="Idade do gato" />
-    
+      <input v-model="animal.name" placeholder="Nome do gato" />
+      <input v-model.number="animal.age" type="number" placeholder="Idade do gato" />
+      <div class="file-upload">
+        <label class="file-label">
+          Selecionar foto
+          <input type="file" @change="handleFile" accept="image/*" hidden />
+        </label>
+
+        <div v-if="preview" class="preview">
+          <img :src="preview" alt="Preview" />
+        </div>
+      </div>
       <div class="adicionar--button">
-        <button @click="adicionarGato">
+        <button @click="salvar">
           <BaseButton
             title="Adicionar novo gato"
             icon="bi bi-plus-lg"
           />
         </button>
-        <CatPics v-if="animalId" :animalId="animalId" />
       </div>
     </div>
   </section>
@@ -21,44 +29,58 @@
 <script setup>
 import BaseButton from '@/components/BaseButton.vue'
 import { ref } from 'vue'
-import CatPics from '@/components/CatPics.vue'
 
 const API_URL = import.meta.env.VITE_API_URL
 const API_KEY = import.meta.env.VITE_API_KEY
 
-const novo = ref({ name: '', age: 0, type: 'Cat' })
-const animalId = ref(null)
+const animal = ref({
+  name: "",
+  age: 0, 
+  type: 'Cat'
+});
 
-async function adicionarGato() {
-  if (!novo.value.name) {
-    alert('Digite o nome!')
-    return
-  }
+const imagem = ref(null);
+const preview = ref(null);
 
+function handleFile(event) {
+  const file = event.target.files[0];
+  imagem.value = file;
+
+  preview.value = URL.createObjectURL(file);
+}
+
+async function salvar() {
   try {
-    const resposta = await fetch(`${API_URL}/api`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': API_KEY
-      },
-      body: JSON.stringify(novo.value)
-    })
-
-    if (!resposta.ok) {
-      throw new Error(`Erro ao adicionar gato (${resposta.status})`)
-    }
-
-    const gatoCriado = await resposta.json()
-
-    // salva o id real para o componente CatPics
-    animalId.value = gatoCriado.id
-
-    alert('Gato adicionado!')
-    novo.value = { name: '', age: 0, type: 'Cat' }
-  } catch (err) {
-    console.error(err)
-    alert(err.message)
+    const res = await adicionarAnimal(animal.value, imagem.value);
+    console.log("Retorno:", res);
+  } catch (e) {
+    console.error(e);
   }
+}
+
+async function adicionarAnimal(animal, imagem) {
+  const formData = new FormData();
+
+  formData.append(
+    "data",
+    new Blob([JSON.stringify(animal)], { type: "application/json" })
+  );
+
+  // O backend espera "multipartImage"
+  if (imagem) formData.append("multipartImage", imagem);
+
+  const response = await fetch(`${API_URL}/api`, {
+    method: "POST",
+    headers: {
+      "x-api-key": API_KEY,
+    },
+    body: formData
+  });
+
+  if (!response.ok) {
+    throw new Error("Erro ao enviar animal");
+  }
+
+  return await response.json();
 }
 </script>
