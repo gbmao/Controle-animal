@@ -9,7 +9,12 @@
 
           <!-- Cabeçalho do gato (clique para expandir/fechar) -->
           <div class="nome--gato--info" @click="toggleInfo(gato.id)">
-            <img class="cat--pics" src="https://controle-animal-production.up.railway.app/images/50" alt="">
+            <img 
+              class="cat--pics" 
+              :class="{placeholder: gato.imgID === -1}"
+              :src="getImagemUrl(gato)" 
+              alt="Foto do gato" 
+            />
             <h3>{{ gato.name }}</h3>
             <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
           </div>
@@ -44,7 +49,6 @@
 import BaseButton from '@/components/BaseButton.vue'
 import BaseCard from '@/components/BaseCard.vue'
 import SetaIcon from '@/components/SetaIcon.vue'
-import CatPics from '@/components/CatPics.vue'
 import { ref, onMounted } from 'vue'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -66,6 +70,14 @@ async function listarGatos() {
   } catch (err) {
     alert('Erro ao listar gatos: ' + err.message)
   }
+}
+
+function getImagemUrl(gato) {
+  if (gato.imgID === -1) {
+    return "/controle-animal.png" 
+  }
+
+  return `${API_URL}/images/${gato.imgID}`
 }
 
 async function deletarGato(id) {

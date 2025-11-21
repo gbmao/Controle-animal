@@ -5,7 +5,7 @@
       <label>Nome:</label>
       <input v-model="animal.name" placeholder="Nome do gato" />
       <label>Data de nascimento:</label>
-      <input v-model="animal.birthDate" type="date" placeholder="Data de nascimento do gato" />
+      <input v-model="animal.birthDate" type="date" class="input--date" placeholder="Data de nascimento do gato" />
       <div class="file-upload">
         <label for="">Adicione uma foto: </label>
         <label class="file-label"> 

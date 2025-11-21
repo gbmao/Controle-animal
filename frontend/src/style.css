@@ -10,6 +10,7 @@
     --header-bg: #7A9590;
     --text-header: #F1E7DD; 
     --text-color: #26211E;
+    --secondary-text-color: #525150;
 }
 
 :root[data-theme='dark'] {
@@ -17,6 +18,7 @@
     --header-bg: #7A9590;
     --text-header: #F1E7DD;
     --text-color: #26211E;
+    --secondary-text-color: #525150;
 }
 
 * {
@@ -84,7 +86,12 @@ input {
 }
 
 input::placeholder {
+    color: var(--secondary-text-color);
     padding: 5px;
+}
+
+.input--date::placeholder {
+    color: var(--secondary-text-color);
 }
 
 button {
@@ -95,6 +102,15 @@ button {
 .icon svg {
     width: 16px;
     height: 16px;
+}
+
+.cat--pics.placeholder {
+    filter: grayscale(100%);
+    opacity: 0.6;
+    border: 2px dashed #aaa;
+    background-color: #f1f1f1;
+    padding: 5px;
+    border-radius: 50%;
 }
 
 /* ===========================
