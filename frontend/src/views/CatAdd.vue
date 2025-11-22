@@ -2,12 +2,16 @@
   <section>
     <h2>Adicionar novo gato:</h2>
     <div class="adicionar--gato">
-      <label>Nome:</label>
-      <input v-model="animal.name" placeholder="Nome do gato" />
-      <label>Data de nascimento:</label>
-      <input v-model="animal.birthDate" type="date" class="input--date" placeholder="Data de nascimento do gato" />
+      <div class="div--label-input">
+        <label>Nome:</label>
+        <input v-model="animal.name" placeholder="Nome do gato" />
+      </div>
+      <div class="div--label-input">
+        <label>Data de nascimento:</label>
+        <input v-model="animal.birthDate" type="date" class="input--date" placeholder="Data de nascimento do gato" />
+      </div>
       <div class="file-upload">
-        <label for="">Adicione uma foto: </label>
+        <label for="">Foto: </label>
         <label class="file-label"> 
           <span>Selecionar foto </span>
           <i class="bi bi-image"></i>

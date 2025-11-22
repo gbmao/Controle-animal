@@ -8,13 +8,19 @@
         <BaseCard>
 
           <!-- Cabeçalho do gato (clique para expandir/fechar) -->
-          <div class="nome--gato--info" @click="toggleInfo(gato.id)">
+          <div class="ficha--gato">
             <img 
-              class="cat--pics" 
-              :class="{placeholder: gato.imgID === -1}"
-              :src="getImagemUrl(gato)" 
-              alt="Foto do gato" 
+              v-if="gato.imgID !== -1"
+              class="cat--pics"
+              :src="getImagemUrl(gato)"
+              alt="Foto do gato"
             />
+            <div 
+              v-else
+              class="cat--pics placeholder"
+            ></div>
+          
+          <div class="nome--gato--info" @click="toggleInfo(gato.id)">
             <h3>{{ gato.name }}</h3>
             <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
           </div>
@@ -35,6 +41,7 @@
                 />
               </button>
             </div>
+          </div>
           </div>
 
         </BaseCard>
@@ -84,7 +91,7 @@ async function deletarGato(id) {
   console.log(`${API_URL}/${id}`)
   if (!confirm('Deseja realmente deletar este gato?')) return
   try {
-    const resposta = await fetch(`${API_URL}/${id}`, {
+    const resposta = await fetch(`${API_URL}/api/${id}`, {
       method: 'DELETE',
       headers: { 'x-api-key': API_KEY },
     })
