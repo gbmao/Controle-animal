@@ -3,17 +3,23 @@
     <h2>Buscar por gato:</h2>
     <div class="buscar--gato">
       <input v-model="busca" placeholder="Digite o nome do gato" />
-      <button @click="buscarGato">
         <BaseButton
+          @click="buscarGato"
           title="Buscar gato"
           icon="bi bi-search"
         />
-      </button>
     </div>
 
     <ul v-if="resultado.length">
       <li v-for="gato in resultado" :key="gato.id">
-        {{ gato.name }} ({{ gato.age }} anos)
+        <BaseCard>
+          <div class="nome--gato--info">
+            <h3>{{ gato.name }}</h3>
+          </div>
+          <div class="gato-detalhes">
+            <p>Idade: {{ gato.age }}</p>
+          </div>
+        </BaseCard>
       </li>
     </ul>
     <p v-else-if="buscou">Nenhum gato encontrado </p>
@@ -22,6 +28,7 @@
 
 <script setup>
 import BaseButton from '@/components/BaseButton.vue'
+import BaseCard from '@/components/BaseCard.vue'
 import { ref } from 'vue'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -50,7 +57,7 @@ async function parseResponse(res) {
 async function buscarGato() {
   if (!busca.value.trim()) return
   try {
-    const url = `${API_URL}/search/${encodeURIComponent(busca.value)}`
+    const url = `${API_URL}/api/search/${encodeURIComponent(busca.value)}`
     const resposta = await fetch(url, {
       headers: { 'x-api-key': API_KEY },
     })
