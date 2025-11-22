@@ -23,25 +23,31 @@
           <div class="nome--gato--info" @click="toggleInfo(gato.id)">
             <h3>{{ gato.name }}</h3>
             <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
-          </div>
-
-          <!-- Conteúdo expandido -->
+            </div>
+            </div>
+            <!-- Conteúdo expandido -->
           <div 
             class="gato-detalhes"
             v-show="aberto[gato.id]"
           >
             <p>Idade: {{ gato.age }}</p>
+            <hr></hr>
+            <h3>Registro veterinário</h3>
+            <p>Veterinário:</p>
+            <p>Vacinas:</p>
+            <p>Data da última vacina:</p>
             <div class="delete--buton">
               <button @click="deletarGato(gato.id)">
                 <BaseButton
                   title="Deletar gato"
                   icon="bi bi-trash3"
                   variant="default"
-                  @click="buscar"
                 />
               </button>
             </div>
-          </div>
+          
+
+          
           </div>
 
         </BaseCard>
