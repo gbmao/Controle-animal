@@ -6,23 +6,19 @@ import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.dto.AnimalWithImgIdReturnDto;
 import com.projeto.controleanimal.service.AnimalService;
 import com.projeto.controleanimal.util.ApiKeyValidator;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-//@CrossOrigin(origins = "*")
-public class Controller {
+public class AnimalController {
     private final AnimalService service;
 
-    private final String secret = System.getenv("API_SECRET");
 
-    public Controller(AnimalService service) {
+    public AnimalController(AnimalService service) {
         this.service = service;
     }
 

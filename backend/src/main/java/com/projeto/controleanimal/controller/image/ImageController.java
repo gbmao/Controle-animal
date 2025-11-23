@@ -28,7 +28,7 @@ public class ImageController {
     private final AnimalRepository animalRepository;
     private ImageService service;
 
-    private final String secret = System.getenv("API_SECRET");
+
 
 
     @Autowired
