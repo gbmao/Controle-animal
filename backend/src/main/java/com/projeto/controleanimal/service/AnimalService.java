@@ -39,12 +39,6 @@ public class AnimalService {
     }
 
 
-    /**
-     * Retorna NULL caso o nome não exista!(
-     *
-     * @param id
-     * @return O animal
-     */
     public AnimalDto getAnimal(Long id) {
 
         var animal = repo.findById(id).orElseThrow(() ->
@@ -53,53 +47,20 @@ public class AnimalService {
         return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
     }
 
-    public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto) {
 
-
-        validator.validate(animalDto.name());
-        validator.validate(animalDto.birthDate());
-
-        Animal animal = switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
-            case "cat" -> new Cat(animalDto.name(), animalDto.birthDate());
-            default ->
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo invalido"); // TODO criar uma classe generica para aceitar quando vier null
-        };
-
-        repo.save(animal);
-        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),
-                animal.getAge(),
-                animal.getClass().getSimpleName(),
-                null);
-    }
 
     public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto, MultipartFile multipartImage) throws Exception {
 
-        if(multipartImage == null || multipartImage.isEmpty() ) {
-            return addAnimal(animalDto);
-        }
-
         validator.validate(animalDto.name());
         validator.validate(animalDto.birthDate());
 
-        Animal animal = switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
-            case "cat" -> new Cat(animalDto.name(), animalDto.birthDate());
-            default ->
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo invalido"); // TODO criar uma classe generica para aceitar quando vier null
-        };
+        Animal animal = createAnimalEntity(animalDto);
 
+        if(multipartImage == null || multipartImage.isEmpty() ) return saveAndReturnDto(animal);
 
-        //criando a img
+        Image dbImage = createImageEntity(multipartImage);
 
-        Image dbImage = new Image();
-        dbImage.setName(multipartImage.getOriginalFilename()); // nao sei bem como funciona existe a opcao de pegar com getName
-        dbImage.setContent(multipartImage.getBytes());
-        dbImage.setAnimal(animal);
-
-        animal.setImage(dbImage);
-
-        repo.save(animal);
-        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),animal.getAge(),animal.getClass().getSimpleName(),
-                animal.getImage().getId());
+        return saveAndReturnDto(animal, dbImage);
     }
 
     public void deleteAnimal(Long id) {
@@ -134,6 +95,7 @@ public class AnimalService {
 
 
 
+
     public Long getIdByName(String name) {
 
         return repo.findAll().stream()
@@ -153,5 +115,39 @@ public class AnimalService {
                         a.getClass().getSimpleName()))
                 .toList();
 
+    }
+
+    private Animal createAnimalEntity(AnimalCreationDto animalDto) {
+
+        return switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
+            case "cat" -> new Cat(animalDto.name(), animalDto.birthDate());
+            default ->
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo invalido"); // TODO criar uma classe generica para aceitar quando vier null
+        };
+    }
+
+    private Image createImageEntity(MultipartFile multipartImage) throws Exception {
+        Image dbImage = new Image();
+        dbImage.setName(multipartImage.getOriginalFilename()); // nao sei bem como funciona existe a opcao de pegar com getName
+        dbImage.setContent(multipartImage.getBytes());
+
+        return dbImage;
+    }
+
+    private AnimalWithImgIdReturnDto saveAndReturnDto(Animal animal) {
+        repo.save(animal);
+        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),
+                animal.getAge(),
+                animal.getClass().getSimpleName(),
+                null);
+    }
+
+    private AnimalWithImgIdReturnDto saveAndReturnDto(Animal animal, Image dbImage) {
+        dbImage.setAnimal(animal);
+        animal.setImage(dbImage);
+
+        repo.save(animal);
+        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),animal.getAge(),animal.getClass().getSimpleName(),
+                animal.getImage().getId());
     }
 }
