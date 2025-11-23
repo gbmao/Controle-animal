@@ -8,28 +8,46 @@
         <BaseCard>
 
           <!-- Cabeçalho do gato (clique para expandir/fechar) -->
+          <div class="ficha--gato">
+            <img 
+              v-if="gato.imgID !== -1"
+              class="cat--pics"
+              :src="getImagemUrl(gato)"
+              alt="Foto do gato"
+            />
+            <div 
+              v-else
+              class="cat--pics placeholder"
+            ></div>
+          
           <div class="nome--gato--info" @click="toggleInfo(gato.id)">
-            <img class="cat--pics" src="https://controle-animal-production.up.railway.app/images/50" alt="">
             <h3>{{ gato.name }}</h3>
             <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
-          </div>
-
-          <!-- Conteúdo expandido -->
+            </div>
+            </div>
+            <!-- Conteúdo expandido -->
           <div 
             class="gato-detalhes"
             v-show="aberto[gato.id]"
           >
             <p>Idade: {{ gato.age }}</p>
+            <hr></hr>
+            <h3>Registro veterinário</h3>
+            <p>Veterinário:</p>
+            <p>Vacinas:</p>
+            <p>Data da última vacina:</p>
             <div class="delete--buton">
               <button @click="deletarGato(gato.id)">
                 <BaseButton
                   title="Deletar gato"
                   icon="bi bi-trash3"
                   variant="default"
-                  @click="buscar"
                 />
               </button>
             </div>
+          
+
+          
           </div>
 
         </BaseCard>
@@ -44,7 +62,6 @@
 import BaseButton from '@/components/BaseButton.vue'
 import BaseCard from '@/components/BaseCard.vue'
 import SetaIcon from '@/components/SetaIcon.vue'
-import CatPics from '@/components/CatPics.vue'
 import { ref, onMounted } from 'vue'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -68,11 +85,19 @@ async function listarGatos() {
   }
 }
 
+function getImagemUrl(gato) {
+  if (gato.imgID === -1) {
+    return "/controle-animal.png" 
+  }
+
+  return `${API_URL}/images/${gato.imgID}`
+}
+
 async function deletarGato(id) {
   console.log(`${API_URL}/${id}`)
   if (!confirm('Deseja realmente deletar este gato?')) return
   try {
-    const resposta = await fetch(`${API_URL}/${id}`, {
+    const resposta = await fetch(`${API_URL}/api/${id}`, {
       method: 'DELETE',
       headers: { 'x-api-key': API_KEY },
     })
