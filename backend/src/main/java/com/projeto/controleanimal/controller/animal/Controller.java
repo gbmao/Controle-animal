@@ -1,5 +1,6 @@
 package com.projeto.controleanimal.controller.animal;
 
+import com.projeto.controleanimal.dto.AnimalCreationDto;
 import com.projeto.controleanimal.dto.AnimalDto;
 import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.dto.AnimalWithImgIdReturnDto;
@@ -51,7 +52,7 @@ public class Controller {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public AnimalWithImgIdReturnDto addAnimal(@RequestHeader("x-api-key") String key,
-                                              @RequestPart("data") AnimalDto dto,
+                                              @RequestPart("data") AnimalCreationDto dto,
                                               @RequestParam("multipartImage") MultipartFile multipartImage) throws Exception {
 
         if (!secret.equals(key)) { //TODO colocar isso em um metodo para ser chamado e evitar repeticao

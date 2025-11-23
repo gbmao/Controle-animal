@@ -1,5 +1,6 @@
 package com.projeto.controleanimal.service;
 
+import com.projeto.controleanimal.dto.AnimalCreationDto;
 import com.projeto.controleanimal.dto.AnimalDto;
 import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.dto.AnimalWithImgIdReturnDto;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -54,16 +56,16 @@ public class AnimalService {
         return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
     }
 
-    public AnimalWithImgIdReturnDto addAnimal(AnimalDto animalDto) {
+    public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto) {
 
         if (containsName(animalDto.name())) {
             throw new IllegalArgumentException("Já existe esse nome na lista");
         }
         //pega número negativo em age
-        if (animalDto.age() < 0) throw new IllegalArgumentException(" número negativo");
+        if (animalDto.birthDate().isAfter(LocalDate.now())) throw new IllegalArgumentException("O gato ainda vai nascer?(data de nascimento no futuro");
 
         Animal animal = switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
-            case "cat" -> new Cat(animalDto.name(), animalDto.age());
+            case "cat" -> new Cat(animalDto.name(), animalDto.birthDate());
             default ->
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo invalido"); // TODO criar uma classe generica para aceitar quando vier null
         };
@@ -75,16 +77,16 @@ public class AnimalService {
                 null);
     }
 
-    public AnimalWithImgIdReturnDto addAnimal(AnimalDto animalDto, MultipartFile multipartImage) throws Exception {
+    public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto, MultipartFile multipartImage) throws Exception {
 
         if (containsName(animalDto.name())) {
             throw new IllegalArgumentException("Já existe esse nome na lista");
         }
         //pega número negativo em age
-        if (animalDto.age() < 0) throw new IllegalArgumentException(" número negativo");
+        if (animalDto.birthDate().isAfter(LocalDate.now())) throw new IllegalArgumentException("O gato ainda vai nascer?(data de nascimento no futuro");
 
         Animal animal = switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
-            case "cat" -> new Cat(animalDto.name(), animalDto.age());
+            case "cat" -> new Cat(animalDto.name(), animalDto.birthDate());
             default ->
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo invalido"); // TODO criar uma classe generica para aceitar quando vier null
         };

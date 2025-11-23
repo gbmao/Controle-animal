@@ -3,6 +3,8 @@ package com.projeto.controleanimal.model;
 import com.projeto.controleanimal.model.vetRecord.VeterinaryRecord;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "type")
@@ -12,6 +14,7 @@ public abstract class Animal { //removido o abstract para teste do postqgre
     private Long id;
 
     private String name;
+    private LocalDate birthDate;
     private int age;
 
     @OneToOne(mappedBy = "animal",cascade = CascadeType.ALL, orphanRemoval = true)
@@ -26,12 +29,12 @@ public abstract class Animal { //removido o abstract para teste do postqgre
     public Animal() {
     }
 
-    Animal(String name, int age) {
+    Animal(String name, LocalDate birthDate) {
         if(name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Nome vazio!");
         }
         this.name = name;
-        this.age = age; //TODO animal esta sendo criado com idade 0 caso null
+        this.birthDate = birthDate; //TODO animal esta sendo criado com idade 0 caso null
     }
 
     public String getName() {
@@ -39,6 +42,17 @@ public abstract class Animal { //removido o abstract para teste do postqgre
     }
 
     public int getAge() {
+
+        if(this.birthDate == null) return 0; // apenas para evitar null pointer exception para os cats criados antes
+
+        var today = LocalDate.now();
+        var age = today.getYear() - birthDate.getYear();
+
+        if (today.getMonthValue() < birthDate.getMonthValue() ||
+                (today.getMonthValue() == birthDate.getMonthValue() && today.getDayOfMonth() < birthDate.getDayOfMonth())) {
+            age--;
+        }
+
         return age;
     }
 
@@ -81,5 +95,9 @@ public abstract class Animal { //removido o abstract para teste do postqgre
 
     public void setVeterinaryRecord(VeterinaryRecord veterinaryRecord) {
         this.veterinaryRecord = veterinaryRecord;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 }
