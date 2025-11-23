@@ -1,4 +1,6 @@
 package com.projeto.controleanimal.dto;
 
-public record AnimalUpdateDto(String name, Integer age) {
+import java.time.LocalDate;
+
+public record AnimalUpdateDto(String name, LocalDate birthDate) {
 }

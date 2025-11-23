@@ -1,5 +1,6 @@
 package com.projeto.controleanimal.service;
 
+import com.projeto.controleanimal.dto.AnimalCreationDto;
 import com.projeto.controleanimal.dto.AnimalDto;
 import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.dto.AnimalWithImgIdReturnDto;
@@ -7,101 +8,59 @@ import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.model.Image;
 import com.projeto.controleanimal.repository.AnimalRepository;
+import com.projeto.controleanimal.util.AnimalValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class AnimalService {
 
-    //    private Map<String, Animal> animals = new LinkedHashMap<>(Db.loadList());
+    private final AnimalValidator validator;
     private final AnimalRepository repo;
 
-    public AnimalService(AnimalRepository repo) {
+    public AnimalService(AnimalRepository repo, AnimalValidator validator) {
         this.repo = repo;
+        this.validator = validator;
     }
 
-    public List<AnimalWithImgIdReturnDto> getAllAnimals() {
+    public List<AnimalWithImgIdReturnDto> getAllAnimals() { //TODO avoid stream for better performance
         return repo.findAll().stream()
                 .map(s -> new AnimalWithImgIdReturnDto(s.getId(),
                         s.getName(),
                         s.getAge(),
                         s.getClass().getSimpleName()
-                ,s.getImage() ==null ? -1 : s.getImage().getId()))
+                        ,s.getImage() == null ? -1 : s.getImage().getId()))
                 .toList();
     }
 
 
-    /**
-     * Retorna NULL caso o nome não exista!(
-     *
-     * @param id
-     * @return O animal
-     */
     public AnimalDto getAnimal(Long id) {
+
         var animal = repo.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Nao encontramos animal com o id: " + id));
-
-//        // checa se existe
-//        if (animal == null) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Animal not found");
-//
-//        }
 
         return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
     }
 
-    public AnimalWithImgIdReturnDto addAnimal(AnimalDto animalDto) {
 
-        if (containsName(animalDto.name())) {
-            throw new IllegalArgumentException("Já existe esse nome na lista");
-        }
-        //pega número negativo em age
-        if (animalDto.age() < 0) throw new IllegalArgumentException(" número negativo");
+    public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto, MultipartFile multipartImage) throws Exception {
 
-        Animal animal = switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
-            case "cat" -> new Cat(animalDto.name(), animalDto.age());
-            default ->
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo invalido"); // TODO criar uma classe generica para aceitar quando vier null
-        };
+        validator.validate(animalDto.name());
+        validator.validate(animalDto.birthDate());
 
-        repo.save(animal);
-        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),
-                animal.getAge(),
-                animal.getClass().getSimpleName(),
-                null);
-    }
+        Animal animal = createAnimalEntity(animalDto);
 
-    public AnimalWithImgIdReturnDto addAnimal(AnimalDto animalDto, MultipartFile multipartImage) throws Exception {
+        if (multipartImage == null || multipartImage.isEmpty()) return saveAndReturnDto(animal);
 
-        if (containsName(animalDto.name())) {
-            throw new IllegalArgumentException("Já existe esse nome na lista");
-        }
-        //pega número negativo em age
-        if (animalDto.age() < 0) throw new IllegalArgumentException(" número negativo");
+        Image dbImage = createImageEntity(multipartImage);
 
-        Animal animal = switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
-            case "cat" -> new Cat(animalDto.name(), animalDto.age());
-            default ->
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo invalido"); // TODO criar uma classe generica para aceitar quando vier null
-        };
-
-
-        //criando a img
-
-        Image dbImage = new Image();
-        dbImage.setName(multipartImage.getOriginalFilename()); // nao sei bem como funciona existe a opcao de pegar com getName
-        dbImage.setContent(multipartImage.getBytes());
-        dbImage.setAnimal(animal);
-
-        animal.setImage(dbImage);
-
-        repo.save(animal);
-        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),animal.getAge(),animal.getClass().getSimpleName(),
-                animal.getImage().getId());
+        return saveAndReturnDto(animal, dbImage);
     }
 
     public void deleteAnimal(Long id) {
@@ -116,52 +75,76 @@ public class AnimalService {
     public AnimalDto changeAnimal(Long animalId, AnimalUpdateDto animalUpdateDto) {
 
         var animalToBeChanged = repo.findById(animalId)
-                .orElseThrow(); //TODO entender melhor e talvez dedicar uma classe em GlobalExceptionHandler
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não encontrado"));
+
 
         if (animalUpdateDto.name() != null) {
+            validator.validate(animalUpdateDto.name());
             animalToBeChanged.setName(animalUpdateDto.name());
         }
-        if (animalUpdateDto.age() != null) {
-            //pega número negativo em age
-            if (animalUpdateDto.age() < 0) throw new IllegalArgumentException(" número negativo");
-            animalToBeChanged.setAge(animalUpdateDto.age());
+
+        if (animalUpdateDto.birthDate() != null) {
+            validator.validate(animalUpdateDto.birthDate());
+            animalToBeChanged.setBirthDate(animalUpdateDto.birthDate());
         }
 
-        repo.save(animalToBeChanged); //TODO devolver na class especifica ao inves de Animal
+        repo.save(animalToBeChanged);
 
         return new AnimalDto(animalToBeChanged.getId(), animalToBeChanged.getName(), animalToBeChanged.getAge(),
                 animalToBeChanged.getClass().getSimpleName());
     }
 
 
-    //procura por nomes duplicados
-    //eventualmente trocar esse method por algo mais pratico do propio postgre!!!
-    private boolean containsName(String name) {
-        List<Animal> listOfName = new ArrayList<>(repo.findAll());
-        for (Animal a : listOfName) {
-            if (a.getName().equalsIgnoreCase(name)) return true;
-        }
-        return false;
-    }
-
     public Long getIdByName(String name) {
 
-        return repo.findAll().stream()
-                .filter(a -> a.getName().equalsIgnoreCase(name)) // TODO criar metodo no repository para enviar buscar a lista inteira
-                .findAny()
-                .map(Animal::getId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nome não encontrado"));
+        return repo.findByNameIgnoreCase(name)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Nome não encotnrado!"))
+                .getId();
     }
 
     public List<AnimalDto> getListOfAnimals(String name) {
-        return repo.findAll().stream()
-                .filter(a -> a.getName().toLowerCase().contains(name.toLowerCase()))
+        return repo.findByNameContainingIgnoreCase(name).stream()
                 .limit(10) // limitar para um numero maximo
-                .map(a -> new AnimalDto(a.getId(),
+                .map(a -> new AnimalDto(
+                        a.getId(),
                         a.getName(),
                         a.getAge(),
                         a.getClass().getSimpleName()))
                 .toList();
 
+    }
+
+    private Animal createAnimalEntity(AnimalCreationDto animalDto) {
+
+        return switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
+            case "cat" -> new Cat(animalDto.name(), animalDto.birthDate());
+            default ->
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo invalido"); // TODO criar uma classe generica para aceitar quando vier null
+        };
+    }
+
+    private Image createImageEntity(MultipartFile multipartImage) throws Exception {
+        Image dbImage = new Image();
+        dbImage.setName(multipartImage.getOriginalFilename()); // nao sei bem como funciona existe a opcao de pegar com getName
+        dbImage.setContent(multipartImage.getBytes());
+
+        return dbImage;
+    }
+
+    private AnimalWithImgIdReturnDto saveAndReturnDto(Animal animal) {
+        repo.save(animal);
+        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),
+                animal.getAge(),
+                animal.getClass().getSimpleName(),
+                null);
+    }
+
+    private AnimalWithImgIdReturnDto saveAndReturnDto(Animal animal, Image dbImage) {
+        dbImage.setAnimal(animal);
+        animal.setImage(dbImage);
+
+        repo.save(animal);
+        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName(),
+                animal.getImage().getId());
     }
 }
