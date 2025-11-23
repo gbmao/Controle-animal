@@ -101,10 +101,10 @@ public class AnimalService {
     }
 
     public List<AnimalDto> getListOfAnimals(String name) {
-        return repo.findAll().stream()
-                .filter(a -> a.getName().toLowerCase().contains(name.toLowerCase()))
+        return repo.findByNameContainingIgnoreCase(name).stream()
                 .limit(10) // limitar para um numero maximo
-                .map(a -> new AnimalDto(a.getId(),
+                .map(a -> new AnimalDto(
+                        a.getId(),
                         a.getName(),
                         a.getAge(),
                         a.getClass().getSimpleName()))
