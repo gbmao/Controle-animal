@@ -8,6 +8,7 @@ import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.model.Image;
 import com.projeto.controleanimal.repository.AnimalRepository;
+import com.projeto.controleanimal.util.AnimalValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,11 +20,12 @@ import java.util.*;
 @Service
 public class AnimalService {
 
-    //    private Map<String, Animal> animals = new LinkedHashMap<>(Db.loadList());
+    private final AnimalValidator validator;
     private final AnimalRepository repo;
 
-    public AnimalService(AnimalRepository repo) {
+    public AnimalService(AnimalRepository repo, AnimalValidator validator) {
         this.repo = repo;
+        this.validator = validator;
     }
 
     public List<AnimalWithImgIdReturnDto> getAllAnimals() { //TODO avoid stream for better performance
@@ -44,25 +46,18 @@ public class AnimalService {
      * @return O animal
      */
     public AnimalDto getAnimal(Long id) {
+
         var animal = repo.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Nao encontramos animal com o id: " + id));
-
-//        // checa se existe
-//        if (animal == null) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Animal not found");
-//
-//        }
 
         return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
     }
 
     public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto) {
 
-        if (containsName(animalDto.name())) {
-            throw new IllegalArgumentException("Já existe esse nome na lista");
-        }
-        //pega número negativo em age
-        if (animalDto.birthDate().isAfter(LocalDate.now())) throw new IllegalArgumentException("O gato ainda vai nascer?(data de nascimento no futuro");
+
+        validator.validate(animalDto.name());
+        validator.validate(animalDto.birthDate());
 
         Animal animal = switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
             case "cat" -> new Cat(animalDto.name(), animalDto.birthDate());
@@ -83,11 +78,8 @@ public class AnimalService {
             return addAnimal(animalDto);
         }
 
-        if (containsName(animalDto.name())) {
-            throw new IllegalArgumentException("Já existe esse nome na lista");
-        }
-        //pega número negativo em age
-        if (animalDto.birthDate().isAfter(LocalDate.now())) throw new IllegalArgumentException("O gato ainda vai nascer?(data de nascimento no futuro");
+        validator.validate(animalDto.name());
+        validator.validate(animalDto.birthDate());
 
         Animal animal = switch ((animalDto.type() == null ? "Classe generica " : animalDto.type().toLowerCase())) {
             case "cat" -> new Cat(animalDto.name(), animalDto.birthDate());
@@ -133,22 +125,14 @@ public class AnimalService {
             animalToBeChanged.setAge(animalUpdateDto.age());
         }
 
-        repo.save(animalToBeChanged); //TODO devolver na class especifica ao inves de Animal
+        repo.save(animalToBeChanged);
 
         return new AnimalDto(animalToBeChanged.getId(), animalToBeChanged.getName(), animalToBeChanged.getAge(),
                 animalToBeChanged.getClass().getSimpleName());
     }
 
 
-    //procura por nomes duplicados
-    //eventualmente trocar esse method por algo mais pratico do propio postgre!!!
-    private boolean containsName(String name) {
-        List<Animal> listOfName = new ArrayList<>(repo.findAll());
-        for (Animal a : listOfName) {
-            if (a.getName().equalsIgnoreCase(name)) return true;
-        }
-        return false;
-    }
+
 
     public Long getIdByName(String name) {
 
