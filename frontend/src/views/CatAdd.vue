@@ -4,7 +4,7 @@
     <div class="adicionar--gato">
       <div class="div--label-input">
         <label>Nome:</label>
-        <input v-model="animal.name" placeholder="Nome do gato" />
+        <input v-model="animal.name" placeholder="Nome do gato" maxlength="20"/>
       </div>
       <div class="div--label-input">
         <label>Data de nascimento:</label>
