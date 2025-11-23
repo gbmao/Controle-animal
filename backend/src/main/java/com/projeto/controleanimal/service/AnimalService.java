@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class AnimalService {
@@ -34,7 +35,7 @@ public class AnimalService {
                         s.getName(),
                         s.getAge(),
                         s.getClass().getSimpleName()
-                ,s.getImage() ==null ? -1 : s.getImage().getId()))
+                        , s.getImage() == null ? -1 : s.getImage().getId()))
                 .toList();
     }
 
@@ -48,7 +49,6 @@ public class AnimalService {
     }
 
 
-
     public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto, MultipartFile multipartImage) throws Exception {
 
         validator.validate(animalDto.name());
@@ -56,7 +56,7 @@ public class AnimalService {
 
         Animal animal = createAnimalEntity(animalDto);
 
-        if(multipartImage == null || multipartImage.isEmpty() ) return saveAndReturnDto(animal);
+        if (multipartImage == null || multipartImage.isEmpty()) return saveAndReturnDto(animal);
 
         Image dbImage = createImageEntity(multipartImage);
 
@@ -93,16 +93,11 @@ public class AnimalService {
     }
 
 
-
-
-
     public Long getIdByName(String name) {
 
-        return repo.findAll().stream()
-                .filter(a -> a.getName().equalsIgnoreCase(name)) // TODO criar metodo no repository para enviar buscar a lista inteira
-                .findAny()
-                .map(Animal::getId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nome não encontrado"));
+        return repo.findByNameIgnoreCase(name)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Nome não encotnrado!"))
+                .getId();
     }
 
     public List<AnimalDto> getListOfAnimals(String name) {
@@ -147,7 +142,7 @@ public class AnimalService {
         animal.setImage(dbImage);
 
         repo.save(animal);
-        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),animal.getAge(),animal.getClass().getSimpleName(),
+        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName(),
                 animal.getImage().getId());
     }
 }
