@@ -100,4 +100,8 @@ public abstract class Animal { //removido o abstract para teste do postqgre
     public LocalDate getBirthDate() {
         return birthDate;
     }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
 }

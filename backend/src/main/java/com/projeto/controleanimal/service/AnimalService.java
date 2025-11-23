@@ -35,7 +35,7 @@ public class AnimalService {
                         s.getName(),
                         s.getAge(),
                         s.getClass().getSimpleName()
-                        , s.getImage() == null ? -1 : s.getImage().getId()))
+                        ,s.getImage() == null ? -1 : s.getImage().getId()))
                 .toList();
     }
 
@@ -75,15 +75,17 @@ public class AnimalService {
     public AnimalDto changeAnimal(Long animalId, AnimalUpdateDto animalUpdateDto) {
 
         var animalToBeChanged = repo.findById(animalId)
-                .orElseThrow(); //TODO entender melhor e talvez dedicar uma classe em GlobalExceptionHandler
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não encontrado"));
+
 
         if (animalUpdateDto.name() != null) {
+            validator.validate(animalUpdateDto.name());
             animalToBeChanged.setName(animalUpdateDto.name());
         }
-        if (animalUpdateDto.age() != null) {
-            //pega número negativo em age
-            if (animalUpdateDto.age() < 0) throw new IllegalArgumentException(" número negativo");
-            animalToBeChanged.setAge(animalUpdateDto.age());
+
+        if (animalUpdateDto.birthDate() != null) {
+            validator.validate(animalUpdateDto.birthDate());
+            animalToBeChanged.setBirthDate(animalUpdateDto.birthDate());
         }
 
         repo.save(animalToBeChanged);
