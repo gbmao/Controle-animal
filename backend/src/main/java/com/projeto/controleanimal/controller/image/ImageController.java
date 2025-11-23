@@ -5,6 +5,7 @@ import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.repository.AnimalRepository;
 import com.projeto.controleanimal.repository.ImageDpRepository;
 import com.projeto.controleanimal.service.ImageService;
+import com.projeto.controleanimal.util.ApiKeyValidator;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -52,9 +53,7 @@ public class ImageController {
                      @PathVariable Long animalId,
                      @RequestHeader("x-api-key") String key) throws Exception {
 
-        if (!secret.equals(key)) { //TODO colocar isso em um metodo para ser chamado e evitar repeticao
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Não autorizado");
-        }
+        ApiKeyValidator.check(key);
 
         return service.uploadImage(multipartImage, animalId);
     }
@@ -78,9 +77,7 @@ public class ImageController {
     @DeleteMapping("/{animalId}")
     void deleteImage(@PathVariable Long animalId,
                      @RequestHeader("x-api-key")String key) {
-        if (!secret.equals(key)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Não autorizado");
-        }
+        ApiKeyValidator.check(key);
 
          service.deleteImg(animalId);
     }

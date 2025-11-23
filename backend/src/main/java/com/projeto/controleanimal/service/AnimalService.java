@@ -26,7 +26,7 @@ public class AnimalService {
         this.repo = repo;
     }
 
-    public List<AnimalWithImgIdReturnDto> getAllAnimals() {
+    public List<AnimalWithImgIdReturnDto> getAllAnimals() { //TODO avoid stream for better performance
         return repo.findAll().stream()
                 .map(s -> new AnimalWithImgIdReturnDto(s.getId(),
                         s.getName(),
