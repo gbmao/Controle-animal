@@ -79,6 +79,10 @@ public class AnimalService {
 
     public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto, MultipartFile multipartImage) throws Exception {
 
+        if(multipartImage == null || multipartImage.isEmpty() ) {
+            return addAnimal(animalDto);
+        }
+
         if (containsName(animalDto.name())) {
             throw new IllegalArgumentException("Já existe esse nome na lista");
         }

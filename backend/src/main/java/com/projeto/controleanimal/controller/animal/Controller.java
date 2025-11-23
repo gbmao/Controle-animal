@@ -41,7 +41,7 @@ public class Controller {
     @GetMapping("search/{name}")
     public AnimalDto getAnimalByName(@PathVariable("name") String name) {
 
-        return getAnimal(service.getIdByName(name)); //TODO devolver um DTO com os dados requisitados
+        return getAnimal(service.getIdByName(name));
     }
 
 
@@ -52,9 +52,6 @@ public class Controller {
 
         ApiKeyValidator.check(key);
 
-        if(multipartImage.isEmpty()) {
-            return  service.addAnimal(dto);
-        }
         return service.addAnimal(dto, multipartImage);
     }
 
