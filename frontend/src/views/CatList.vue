@@ -68,7 +68,7 @@
   >
     <BaseButton
       title="Salvar nome"
-      icon="bi bi-check2-circle"
+      icon="bi bi-check-lg"
       variant="default"
     />
   </button>
@@ -116,7 +116,14 @@ async function listarGatos() {
     const resposta = await fetch(`${API_URL}/api/all`, {
       headers: { 'x-api-key': API_KEY },
     })
-    gatos.value = await resposta.json()
+
+    const data = await resposta.json()
+
+    // Aqui é só usar o data.sort para organizar por ordem alfabética pelo nome dos gatos
+    gatos.value = data.sort((a, b) => 
+      a.name.localeCompare(b.name)
+    )
+
   } catch (err) {
     alert('Erro ao listar gatos: ' + err.message)
   }
@@ -179,7 +186,6 @@ async function salvarNome(gato) {
     alert(err.message)
   }
 }
-
 
 onMounted(listarGatos)
 </script>
