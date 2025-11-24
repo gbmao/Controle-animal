@@ -21,7 +21,17 @@
             ></div>
           
           <div class="nome--gato--info" @click="toggleInfo(gato.id)">
-            <h3>{{ gato.name }}</h3>
+            <h3 v-if="editando !== gato.id">
+  {{ gato.name }}
+</h3>
+
+<input 
+  v-else 
+  v-model="nomeEditado" 
+  class="input-editar-nome"
+  @keyup.enter="salvarNome(gato)"
+  @click.stop
+/>
             <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
             </div>
             </div>
@@ -36,15 +46,42 @@
             <p>Veterinário:</p>
             <p>Vacinas:</p>
             <p>Data da última vacina:</p>
+
             <div class="delete--buton">
-              <button @click="deletarGato(gato.id)">
-                <BaseButton
-                  title="Deletar gato"
-                  icon="bi bi-trash3"
-                  variant="default"
-                />
-              </button>
-            </div>
+
+  <!-- Botão EDITAR (lápis) -->
+  <button 
+    v-if="editando !== gato.id"
+    @click.stop="editarNome(gato)"
+  >
+    <BaseButton
+      title="Editar nome do gato"
+      icon="bi bi-pencil"
+      variant="default"
+    />
+  </button>
+
+  <!-- Botão SALVAR (disquete) -->
+  <button 
+    v-else
+    @click.stop="salvarNome(gato)"
+  >
+    <BaseButton
+      title="Salvar nome"
+      icon="bi bi-check-lg"
+      variant="default"
+    />
+  </button>
+
+  <!-- Botão deletar -->
+  <button @click="deletarGato(gato.id)">
+    <BaseButton
+      title="Deletar gato"
+      icon="bi bi-trash3"
+      variant="default"
+    />
+  </button>
+</div>
           
 
           
@@ -80,7 +117,14 @@ async function listarGatos() {
     const resposta = await fetch(`${API_URL}/api/all`, {
       headers: { 'x-api-key': API_KEY },
     })
-    gatos.value = await resposta.json()
+
+    const data = await resposta.json()
+
+    // Aqui é só usar o data.sort para organizar por ordem alfabética pelo nome dos gatos
+    gatos.value = data.sort((a, b) => 
+      a.name.localeCompare(b.name)
+    )
+
   } catch (err) {
     alert('Erro ao listar gatos: ' + err.message)
   }
@@ -105,6 +149,41 @@ async function deletarGato(id) {
     if (!resposta.ok) throw new Error('Erro ao deletar gato')
     listarGatos()
   } catch (err) {
+    alert(err.message)
+  }
+}
+
+const editando = ref(null) // id do gato sendo editado
+const nomeEditado = ref("")
+
+function editarNome(gato) {
+  editando.value = gato.id
+  nomeEditado.value = gato.name
+}
+
+async function salvarNome(gato) {
+  try {
+    const resposta = await fetch(`${API_URL}/api/${gato.id}`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY
+      },
+      body: JSON.stringify({
+  name: nomeEditado.value
+})
+
+    })
+
+    if (!resposta.ok) throw new Error("Erro ao alterar nome")
+
+    // Atualiza lista
+    await listarGatos()
+
+    // Sai do modo edição
+    editando.value = null
+
+  } catch(err) {
     alert(err.message)
   }
 }
