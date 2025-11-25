@@ -58,20 +58,11 @@ public class ImageController {
         return service.uploadImage(multipartImage, animalId);
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<ByteArrayResource> downloadImage(@PathVariable Long id) {
-        //TODO mover tudo isso para service
-        byte[] imageBytes = imageDpRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .getContent();
+    @GetMapping(value = "/{animalId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<ByteArrayResource> downloadImage(@PathVariable Long animalId) {
 
-        ByteArrayResource resource = new ByteArrayResource(imageBytes);
 
-        return  ResponseEntity
-                .ok()
-                .contentLength(imageBytes.length)
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(resource);
+        return  service.getImgByAnimalId(animalId);
     }
 
     @DeleteMapping("/{animalId}")

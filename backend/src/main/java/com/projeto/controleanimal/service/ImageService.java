@@ -5,11 +5,15 @@ import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Image;
 import com.projeto.controleanimal.repository.AnimalRepository;
 import com.projeto.controleanimal.repository.ImageDpRepository;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ImageService {
@@ -57,6 +61,29 @@ public class ImageService {
 
         animal.setImage(null);
         animalRepository.save(animal);
+    }
+
+    public ResponseEntity<ByteArrayResource> getImgByAnimalId(Long animalId) {
+
+        Animal animal = findAnimalOrThrow(animalId);
+
+        var imageBytes = Optional.ofNullable(animal.getImage())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Animal não possui imagem!"))
+                .getContent();
+
+        ByteArrayResource resource = new ByteArrayResource(imageBytes);
+
+        return ResponseEntity
+                .ok()
+                .contentLength(imageBytes.length)
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(resource);
+    }
+
+    private Animal findAnimalOrThrow(Long animalId) {
+        return animalRepository.findById(animalId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Animal não encontrado com o id: " + animalId)
+        );
     }
 
 }
