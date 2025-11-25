@@ -69,9 +69,7 @@ function toggleInfo(id) {
 
 async function listarGatos() {
   try {
-    const resposta = await fetch(`${API_URL}/api/all`, {
-      headers: { 'x-api-key': API_KEY },
-    })
+    const resposta = await fetch("/.netlify/functions/listar-gatos")
 
     const data = await resposta.json()
 
