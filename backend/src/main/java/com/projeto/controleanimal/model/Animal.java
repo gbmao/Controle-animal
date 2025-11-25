@@ -1,26 +1,40 @@
 package com.projeto.controleanimal.model;
 
+import com.projeto.controleanimal.model.vetRecord.VeterinaryRecord;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public  class Animal { //removido o abstract para teste do postqgre
+@DiscriminatorColumn(name = "type")
+public abstract class Animal { //removido o abstract para teste do postqgre
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+    private LocalDate birthDate;
     private int age;
+
+    @OneToOne(mappedBy = "animal",cascade = CascadeType.ALL, orphanRemoval = true)
+    private Image image;
+
+    @OneToOne(mappedBy = "animal",cascade = CascadeType.ALL, orphanRemoval = true)
+    private VeterinaryRecord veterinaryRecord;
+
+    @Version
+    private Long version;
 
     public Animal() {
     }
 
-    Animal(String name, int age) {
+    Animal(String name, LocalDate birthDate) {
         if(name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Nome vazio!");
         }
         this.name = name;
-        this.age = age; //TODO animal esta sendo criado com idade 0 caso null
+        this.birthDate = birthDate; //TODO animal esta sendo criado com idade 0 caso null
     }
 
     public String getName() {
@@ -28,22 +42,66 @@ public  class Animal { //removido o abstract para teste do postqgre
     }
 
     public int getAge() {
+
+        if(this.birthDate == null) return 0; // apenas para evitar null pointer exception para os cats criados antes
+
+        var today = LocalDate.now();
+        var age = today.getYear() - birthDate.getYear();
+
+        if (today.getMonthValue() < birthDate.getMonthValue() ||
+                (today.getMonthValue() == birthDate.getMonthValue() && today.getDayOfMonth() < birthDate.getDayOfMonth())) {
+            age--;
+        }
+
         return age;
     }
 
     // setters devem ser chamados apenas por  funçoes especificas
     //ex crie uma funcao changeName()
-    void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
     //eventualmente criar um envelhecimento automatico baseado na data de nascimento do animal
     // funcao birthday() que alem de alterar a idade daria um aviso de aniversario
-    void setAge(int age) {
+    public void setAge(int age) {
         this.age = age;
     }
 
     public Long getId() {
         return id;
+    }
+
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public VeterinaryRecord getVeterinaryRecord() {
+        return veterinaryRecord;
+    }
+
+    public void setVeterinaryRecord(VeterinaryRecord veterinaryRecord) {
+        this.veterinaryRecord = veterinaryRecord;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 }
