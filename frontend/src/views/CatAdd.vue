@@ -101,6 +101,10 @@ async function adicionarAnimal(animal, imagem) {
     body: formData
   });
 
+  if(response.ok) {
+    alert("Gato adicionado!")
+  }
+
   if (!response.ok) {
     throw new Error("Erro ao enviar animal");
   }

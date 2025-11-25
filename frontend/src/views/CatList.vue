@@ -1,13 +1,9 @@
 <template>
   <section>
     <h2>Gatos registrados:</h2>
-    
     <ul class="cat--list" v-if="gatos.length">
-      
       <li v-for="gato in gatos" :key="gato.id">
         <BaseCard>
-
-          <!-- Cabeçalho do gato (clique para expandir/fechar) -->
           <div class="ficha--gato">
             <img 
               v-if="gato.imgID !== -1"
@@ -15,45 +11,43 @@
               :src="getImagemUrl(gato)"
               alt="Foto do gato"
             />
-            <div 
-              v-else
-              class="cat--pics placeholder"
-            ></div>
-          
-          <div class="nome--gato--info" @click="toggleInfo(gato.id)">
-            <h3>{{ gato.name }}</h3>
-            <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
+            <div v-else class="cat--pics placeholder"></div>
+            <div class="nome--gato--info" @click="toggleInfo(gato.id)">
+              <h3 v-if="editando !== gato.id">{{ gato.name }}</h3>
+              <input 
+                v-else 
+                v-model="nomeEditado" 
+                class="input-editar-nome"
+                @keyup.enter="salvarNome(gato)"
+                @click.stop
+              />
+              <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
             </div>
-            </div>
-            <!-- Conteúdo expandido -->
-          <div 
-            class="gato-detalhes"
-            v-show="aberto[gato.id]"
-          >
+          </div>
+          <!-- Aqui fecha ficha--gato -->
+          <div class="gato-detalhes" v-show="aberto[gato.id]">
             <p>Idade: {{ gato.age }}</p>
-            <hr></hr>
+            <hr />
             <h3>Registro veterinário</h3>
             <p>Veterinário:</p>
             <p>Vacinas:</p>
             <p>Data da última vacina:</p>
             <div class="delete--buton">
+              <button v-if="editando !== gato.id" @click.stop="editarNome(gato)">
+                <BaseButton title="Editar nome do gato" icon="bi bi-pencil" variant="default" />
+              </button>
+              <button v-else @click.stop="salvarNome(gato)">
+                <BaseButton title="Salvar nome" icon="bi bi-check-lg" variant="default" />
+              </button>
               <button @click="deletarGato(gato.id)">
-                <BaseButton
-                  title="Deletar gato"
-                  icon="bi bi-trash3"
-                  variant="default"
-                />
+                <BaseButton title="Deletar gato" icon="bi bi-trash3" variant="default" />
               </button>
             </div>
-          
-
-          
           </div>
           </div>
 
         </BaseCard>
       </li>
-      
     </ul>
     <p v-else>Nenhum gato encontrado</p>
   </section>
@@ -80,7 +74,14 @@ async function listarGatos() {
     const resposta = await fetch(`${API_URL}/api/all`, {
       headers: { 'x-api-key': API_KEY },
     })
-    gatos.value = await resposta.json()
+
+    const data = await resposta.json()
+
+    // Aqui é só usar o data.sort para organizar por ordem alfabética pelo nome dos gatos
+    gatos.value = data.sort((a, b) => 
+      a.name.localeCompare(b.name)
+    )
+
   } catch (err) {
     alert('Erro ao listar gatos: ' + err.message)
   }
@@ -105,6 +106,41 @@ async function deletarGato(id) {
     if (!resposta.ok) throw new Error('Erro ao deletar gato')
     listarGatos()
   } catch (err) {
+    alert(err.message)
+  }
+}
+
+const editando = ref(null) // id do gato sendo editado
+const nomeEditado = ref("")
+
+function editarNome(gato) {
+  editando.value = gato.id
+  nomeEditado.value = gato.name
+}
+
+async function salvarNome(gato) {
+  try {
+    const resposta = await fetch(`${API_URL}/api/${gato.id}`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY
+      },
+      body: JSON.stringify({
+  name: nomeEditado.value
+})
+
+    })
+
+    if (!resposta.ok) throw new Error("Erro ao alterar nome")
+
+    // Atualiza lista
+    await listarGatos()
+
+    // Sai do modo edição
+    editando.value = null
+
+  } catch(err) {
     alert(err.message)
   }
 }
