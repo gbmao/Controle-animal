@@ -44,6 +44,8 @@
               </button>
             </div>
           </div>
+          </div>
+
         </BaseCard>
       </li>
     </ul>

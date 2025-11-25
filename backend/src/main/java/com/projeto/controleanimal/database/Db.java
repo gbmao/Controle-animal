@@ -47,7 +47,7 @@ public class Db {
                 if (parts.length == 2) {
                     String name = parts[0].trim();
                     int age = Integer.parseInt(parts[1].trim());
-                    list.put(name.toLowerCase(), new Cat(name, age));
+                    list.put(name.toLowerCase(), new Cat());
                 }
             }
             System.out.println("Arquivo carregado com sucesso!");
