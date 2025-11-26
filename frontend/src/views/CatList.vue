@@ -93,10 +93,12 @@ function getImagemUrl(gato) {
 }
 
 async function deletarGato(id) {
-  console.log(`${API_URL}/${id}`)
   if (!confirm('Deseja realmente deletar este gato?')) return
   try {
     const resposta = await fetch(`/.netlify/functions/deletar-gato?id=${id}`)
+    if (resposta.ok) {
+      alert("Gato excluído")
+    }
     if (!resposta.ok) throw new Error('Erro ao deletar gato')
     listarGatos()
   } catch (err) {
@@ -114,13 +116,23 @@ function editarNome(gato) {
 
 async function salvarNome(gato) {
   try {
-    const resposta = await fetch("/.netlify/functions/editar-gato", {
-  method: "POST",
-  body: JSON.stringify({ id: gato.id, name: nomeEditado.value })
+    // Atualiza o nome temporariamente para enviar ao backend
+    const gatoAtualizado = {
+      ...gato,
+      name: nomeEditado.value
+    };
 
-    })
+    const resposta = await fetch("/.netlify/functions/editar-gato", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(gatoAtualizado)
+    });
 
     if (!resposta.ok) throw new Error("Erro ao alterar nome")
+
+    if (resposta.ok) {
+      alert("Nome alterado com sucesso!")
+    }
 
     // Atualiza lista
     await listarGatos()
