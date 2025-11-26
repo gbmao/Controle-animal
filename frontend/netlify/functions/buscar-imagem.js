@@ -1,6 +1,5 @@
     export async function handler(event) {
     const API_URL = process.env.VITE_API_URL;
-
     const id = event.queryStringParameters.id;
 
     if (!id) {
@@ -11,12 +10,12 @@
     }
 
     try {
-        // Chama o BACKEND correto -> /images/{id}
         const response = await fetch(`${API_URL}/images/${id}`);
 
+        // se o backend retornar null → Netlify recebe response.ok = false
         if (!response.ok) {
         return {
-            statusCode: response.status,
+            statusCode: 404,
             body: JSON.stringify({ error: "Imagem não encontrada" })
         };
         }
@@ -32,6 +31,7 @@
         body: base64Image,
         isBase64Encoded: true
         };
+
 
     } catch (err) {
         return {
