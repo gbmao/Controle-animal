@@ -93,11 +93,8 @@ async function adicionarAnimal(animal, imagem) {
   // O backend espera "multipartImage"
   if (imagem) formData.append("multipartImage", imagem);
 
-  const response = await fetch(`${API_URL}/api`, {
-    method: "POST",
-    headers: {
-      "x-api-key": API_KEY,
-    },
+  const response = await fetch(`/.netlify/functions/adicionar--gato`, {
+    
     body: formData
   });
 

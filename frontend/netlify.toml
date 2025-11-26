@@ -1,3 +1,6 @@
 [dev]
   framework = "vite"
   targetPort = 5174
+
+[functions]
+  directory = "netlify/functions"
