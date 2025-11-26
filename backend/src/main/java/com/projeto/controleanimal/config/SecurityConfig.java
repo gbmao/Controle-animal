@@ -26,7 +26,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/**","/images/**").authenticated()
                         .anyRequest().permitAll()
                 )
-                .httpBasic(withDefaults());
+                .httpBasic(withDefaults()); // TODO retirar quando for dar deploy pro frontend
         return http.build();
     }
 

@@ -4,9 +4,15 @@ import com.projeto.controleanimal.dto.AnimalCreationDto;
 import com.projeto.controleanimal.dto.AnimalDto;
 import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.dto.AnimalWithImgIdReturnDto;
+import com.projeto.controleanimal.model.AppUser;
+import com.projeto.controleanimal.repository.UserRepository;
+import com.projeto.controleanimal.security.CustomUserDetails;
 import com.projeto.controleanimal.service.AnimalService;
 import com.projeto.controleanimal.util.ApiKeyValidator;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,10 +22,11 @@ import java.util.List;
 @RequestMapping("/api")
 public class AnimalController {
     private final AnimalService service;
+    private final UserRepository userRepository;
 
-
-    public AnimalController(AnimalService service) {
+    public AnimalController(AnimalService service, UserRepository userRepository) {
         this.service = service;
+        this.userRepository = userRepository;
     }
 
 
@@ -33,6 +40,18 @@ public class AnimalController {
 
         return service.getAllAnimals();
     }
+
+
+    @GetMapping("/me")
+    public String getMe(@AuthenticationPrincipal CustomUserDetails user) {
+        AppUser user1 = userRepository.findByLogin(user.getUsername()).orElseThrow();
+
+        return "Seu ID é: " + user.getId() +
+                "name: " + user1.getUsername() +
+                "Email: " + user1.getEmail() +
+                "Password: " + user1.getPassword();
+    }
+
 
     @GetMapping("search/{name}")
     public AnimalDto getAnimalByName(@PathVariable("name") String name) {
