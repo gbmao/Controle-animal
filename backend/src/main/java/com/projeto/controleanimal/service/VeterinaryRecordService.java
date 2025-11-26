@@ -34,8 +34,8 @@ public class VeterinaryRecordService {
     }
 
     public VeterinaryRecordDto createVeterinaryRecord(Long idAnimal) { //TODO change to return DATA from VeterinaryRecord
-        Animal animal = animalRepo.findById(idAnimal)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não existe"));
+
+        Animal animal = getAnimal(idAnimal);
 
         VeterinaryRecord vetRec = new VeterinaryRecord();
         vetRec.setAnimal(animal);
@@ -50,8 +50,8 @@ public class VeterinaryRecordService {
     }
 
     public VetVisitReturnDto createVetVisit(VetVisitDto vetVisitDto, Long idAnimal) {
-        Animal animal = animalRepo.findById(idAnimal)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não existe"));
+        Animal animal = getAnimal(idAnimal);
+
         if (animal.getVeterinaryRecord() == null) {
             createVeterinaryRecord(animal.getId());
         }
@@ -78,8 +78,7 @@ public class VeterinaryRecordService {
     }
 
     private Optional<Double> grabFromLastWeight(Long idAnimal) {
-        Animal animal = animalRepo.findById(idAnimal)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não existe"));
+        Animal animal = getAnimal(idAnimal);
 
 
         return animal.getVeterinaryRecord().getVetVisitsList().stream()
@@ -87,5 +86,10 @@ public class VeterinaryRecordService {
                 .map(VetVisits::weight)
                 .filter(Objects::nonNull)
                 .findFirst();
+    }
+
+    private Animal getAnimal(Long idAnimal) {
+        return animalRepo.findById(idAnimal)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não existe"));
     }
 }
