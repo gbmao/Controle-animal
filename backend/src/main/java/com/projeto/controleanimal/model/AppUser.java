@@ -40,6 +40,10 @@ public class AppUser implements UserDetails {
         this.password = password;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public List<Long> getAnimalIds() {
         return animalIds;
     }
