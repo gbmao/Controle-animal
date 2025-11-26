@@ -10,6 +10,8 @@ import com.projeto.controleanimal.service.VeterinaryRecordService;
 import com.projeto.controleanimal.util.ApiKeyValidator;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/{idAnimal}/veterinary-record")
 public class VeterinaryRecordController {
@@ -34,5 +36,11 @@ public class VeterinaryRecordController {
 
         ApiKeyValidator.check(key);
         return veterinaryRecordService.createVetVisit(vetVisitDto, idAnimal);
+    }
+
+    @GetMapping("/vet-visit/all")
+    List<VetVisitReturnDto> getAllVetVisit(@PathVariable("idAnimal")Long idAnimal) {
+
+        return veterinaryRecordService.getAllVetVisits(idAnimal);
     }
 }
