@@ -1,7 +1,10 @@
 package com.projeto.controleanimal.repository;
 
-import com.projeto.controleanimal.model.User;
+import com.projeto.controleanimal.model.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<AppUser, Long> {
+    Optional<AppUser> findByLogin(String login);
 }

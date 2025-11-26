@@ -1,8 +1,7 @@
 package com.projeto.controleanimal.service;
 
-import com.projeto.controleanimal.config.SecurityConfig;
-import com.projeto.controleanimal.dto.user.UserCreationDto;
-import com.projeto.controleanimal.model.User;
+import com.projeto.controleanimal.dto.appUser.UserCreationDto;
+import com.projeto.controleanimal.model.AppUser;
 import com.projeto.controleanimal.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,8 +23,10 @@ public class UserService {
 
         String hashed = passwordEncoder.encode(userDto.password());
 
-        User user = new User(userDto.email(), userDto.login(), hashed);
+        AppUser appUser = new AppUser(userDto.email(), userDto.login(), hashed);
 
-        repo.save(user);
+        appUser.getRoles().add("APPUSER");
+
+        repo.save(appUser);
     }
 }
