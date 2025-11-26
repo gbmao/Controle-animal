@@ -69,9 +69,7 @@ function toggleInfo(id) {
 
 async function listarGatos() {
   try {
-    const resposta = await fetch(`${API_URL}/api/all`, {
-      headers: { 'x-api-key': API_KEY },
-    })
+    const resposta = await fetch("/.netlify/functions/listar-gatos")
 
     const data = await resposta.json()
 
@@ -90,17 +88,15 @@ function getImagemUrl(gato) {
     return "/controle-animal.png" 
   }
 
-  return `${API_URL}/images/${gato.imgID}`
+  return `/.netlify/functions/buscar-imagem?id=${gato.id}`;
+
 }
 
 async function deletarGato(id) {
   console.log(`${API_URL}/${id}`)
   if (!confirm('Deseja realmente deletar este gato?')) return
   try {
-    const resposta = await fetch(`${API_URL}/api/${id}`, {
-      method: 'DELETE',
-      headers: { 'x-api-key': API_KEY },
-    })
+    const resposta = await fetch(`/.netlify/functions/deletar-gato?id=${id}`)
     if (!resposta.ok) throw new Error('Erro ao deletar gato')
     listarGatos()
   } catch (err) {
@@ -118,15 +114,9 @@ function editarNome(gato) {
 
 async function salvarNome(gato) {
   try {
-    const resposta = await fetch(`${API_URL}/api/${gato.id}`, {
-      method: "PUT",
-      headers: { 
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY
-      },
-      body: JSON.stringify({
-  name: nomeEditado.value
-})
+    const resposta = await fetch("/.netlify/functions/editar-gato", {
+  method: "POST",
+  body: JSON.stringify({ id: gato.id, name: nomeEditado.value })
 
     })
 
