@@ -1,28 +1,40 @@
 <template>
   <section>
     <h2>Buscar por gato:</h2>
+
     <div class="buscar--gato">
       <input v-model="busca" placeholder="Digite o nome do gato" />
-        <BaseButton
-          @click="buscarGato"
-          title="Buscar gato"
-          icon="bi bi-search"
-        />
+
+      <BaseButton
+        @click="buscarGato"
+        title="Buscar gato"
+        icon="bi bi-search"
+      />
     </div>
 
     <ul v-if="resultado.length">
       <li v-for="gato in resultado" :key="gato.id">
         <BaseCard>
-          <div class="nome--gato--info">
-            <h3>{{ gato.name }}</h3>
-          </div>
+
+          <!-- IMAGEM OU PLACEHOLDER -->
+        <img
+        v-if="gato.imgID !== -1"
+        :src="gato.imagemUrl"
+        class="cat--pics"
+        />
+
+        <div v-else class="cat--pics placeholder"></div>
+
           <div class="gato-detalhes">
+            <h3>{{ gato.name }}</h3>
             <p>Idade: {{ gato.age }}</p>
           </div>
+
         </BaseCard>
       </li>
     </ul>
-    <p v-else-if="buscou">Nenhum gato encontrado </p>
+
+    <p v-else-if="buscou">Nenhum gato encontrado</p>
   </section>
 </template>
 
@@ -31,55 +43,75 @@ import BaseButton from '@/components/BaseButton.vue'
 import BaseCard from '@/components/BaseCard.vue'
 import { ref } from 'vue'
 
-const API_URL = import.meta.env.VITE_API_URL
-const API_KEY = import.meta.env.VITE_API_KEY
-
 const busca = ref('')
 const resultado = ref([])
 const buscou = ref(false)
 
-// util para tentar parsear JSON com fallback para texto
-async function parseResponse(res) {
-  const ct = res.headers.get('content-type') || ''
-  const text = await res.text()
-  // tenta parsear se for JSON ou aparentar JSON
-  if (ct.includes('application/json') || text.trim().startsWith('{') || text.trim().startsWith('[')) {
-    try {
-      return JSON.parse(text)
-    } catch (e) {
-      // fallback: devolve o texto caso o JSON esteja malformado
-      return { __rawText: text }
+// Função que busca a imagem individualmente via Netlify
+async function carregarImagem(gato) {
+  try {
+    const res = await fetch(`/.netlify/functions/buscar-imagem?id=${gato.id}`)
+
+    if (!res.ok) {
+      return {
+        ...gato,
+        imgID: -1,
+        imagemUrl: "/controle-animal.png"
+      }
+    }
+
+    const blob = await res.blob()
+
+    // 🔥 CASO CRÍTICO → quando o backend devolve imagem null
+    if (blob.size === 0) {
+      return {
+        ...gato,
+        imgID: -1,
+        imagemUrl: "/controle-animal.png"
+      }
+    }
+
+    const url = URL.createObjectURL(blob)
+
+    return {
+      ...gato,
+      imgID: gato.id,
+      imagemUrl: url
+    }
+
+  } catch (e) {
+    return {
+      ...gato,
+      imgID: -1,
+      imagemUrl: "/controle-animal.png"
     }
   }
-  return { __rawText: text }
 }
 
 async function buscarGato() {
   if (!busca.value.trim()) return
-  try {
-    const url = `${API_URL}/api/search/${encodeURIComponent(busca.value)}`
-    const resposta = await fetch(url, {
-      headers: { 'x-api-key': API_KEY },
-    })
 
-    const parsed = await parseResponse(resposta)
+  try {
+    const url = `/.netlify/functions/buscar-gato?nome=${encodeURIComponent(busca.value)}`
+    const resposta = await fetch(url)
 
     if (!resposta.ok) {
-      // se o backend devolveu mensagem em texto, parsed.__rawText terá o texto
-      const msg = parsed && parsed.message ? parsed.message : parsed.__rawText || 'Erro desconhecido'
-      throw new Error(msg)
+      resultado.value = []
+      return
     }
 
-    // se parsed for { __rawText: '...' } significa que veio texto (não ideal)
-    if (parsed.__rawText) {
-      // tenta converter texto simples em array/objeto esperado (ou mostrarmos mensagem)
-      // aqui assumimos que backend deveria retornar um array de gatos em JSON
-      console.warn('Resposta não-JSON recebida:', parsed.__rawText)
-      resultado.value = [] // ou interpretar conforme necessário
-      throw new Error(parsed.__rawText)
-    } else {
-      resultado.value = Array.isArray(parsed) ? parsed : [parsed]
-    }
+    const dados = await resposta.json()
+
+    // garante array
+    const gatos = Array.isArray(dados) ? dados : []
+
+    // 2️⃣ para cada gato → buscar imagem
+    const gatosComImagem = await Promise.all(
+      gatos.map(g => carregarImagem(g))
+    )
+
+    resultado.value = gatosComImagem
+
   } catch (err) {
     alert('Erro ao buscar gato: ' + err.message)
     resultado.value = []
@@ -87,29 +119,4 @@ async function buscarGato() {
     buscou.value = true
   }
 }
-
-async function buscarSugestoes() {
-  if (busca.value.length < 2) {
-    sugestoes.value = []
-    return
-  }
-
-  try {
-    const url = `${API_URL}/search/${encodeURIComponent(busca.value)}`
-    const resposta = await fetch(url, { headers: { 'x-api-key': API_KEY } })
-    const parsed = await parseResponse(resposta)
-
-    if (!resposta.ok) {
-      const msg = parsed && parsed.message ? parsed.message : parsed.__rawText || 'Erro desconhecido'
-      throw new Error(msg)
-    }
-
-    // espera um array de sugestões
-    sugestoes.value = Array.isArray(parsed) ? parsed : []
-  } catch (err) {
-    console.warn('Erro ao buscar sugestões:', err.message)
-    sugestoes.value = []
-  }
-}
-
 </script>
