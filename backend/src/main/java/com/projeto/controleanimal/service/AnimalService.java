@@ -78,7 +78,9 @@ public class AnimalService {
     }
 
     public void deleteAnimal(Long id) {
-        Animal animal = repo.findById(id).orElseThrow();
+        Animal animal = repo.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NO_CONTENT,"User Possui esse id, porem nao existe, no database, animal com o id: " + id)
+        );
 
         animal.setImage(null);
 
