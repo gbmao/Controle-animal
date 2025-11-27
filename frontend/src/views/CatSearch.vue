@@ -15,17 +15,20 @@
     <ul v-if="resultado.length">
       <li v-for="gato in resultado" :key="gato.id">
         <BaseCard>
-          <div class="search--gato">
-          <!-- IMAGEM OU PLACEHOLDER -->
-              <img v-if="gato.imagemBase64" :src="gato.imagemUrl" />
-              <div v-else class="cat--pics placeholder"></div>
-          
-            <h3>{{ gato.name }}</h3>
-            </div>
-            <div class="gato-detalhes-search">
-            <p>Idade: {{ gato.age }}</p>
-          </div>
+          <div class="info--search">
+            <div class="cat--search">
+              <img v-if="gato.imagemUrl" :src="gato.imagemUrl" class="cat--pics" />
 
+              <!-- MOSTRA PLACEHOLDER SE NÃO EXISTIR -->
+              <div v-else class="cat--pics placeholder"></div>
+
+              <h3>{{ gato.name }}</h3>
+              </div>
+              <hr/>
+              <div class="gato-detalhes-search">
+                <p>Idade: {{ gato.age }}</p>
+              </div>
+            </div>
         </BaseCard>
       </li>
     </ul>
@@ -57,12 +60,14 @@ async function buscarGato() {
 
     const gatos = await resposta.json()
 
-    resultado.value = gatos.map(g => ({
-      ...g,
-      imagemUrl: g.imagemBase64 
-        ? g.imagemBase64
-        : "/controle-animal.png"
-    }))
+resultado.value = gatos.map(g => {
+  console.log("🐱 Dados recebidos do backend:", g)
+  console.log("📸 URL gerada pelo backend (imagemUrl):", g.imagemUrl)
+  return {
+    ...g,
+    imagemUrl: g.imagemUrl || null
+  }
+})
 
   } catch (err) {
     alert("Erro ao buscar gato: " + err.message)
