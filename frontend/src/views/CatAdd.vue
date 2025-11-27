@@ -93,8 +93,8 @@ async function adicionarAnimal(animal, imagem) {
   // O backend espera "multipartImage"
   if (imagem) formData.append("multipartImage", imagem);
 
-  const response = await fetch(`/.netlify/functions/adicionar--gato`, {
-    
+  const response = await fetch(`/.netlify/functions/adicionar-gato`, {
+    method: "POST",
     body: formData
   });
 
