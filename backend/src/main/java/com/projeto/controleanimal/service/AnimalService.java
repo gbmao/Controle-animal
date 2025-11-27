@@ -125,6 +125,10 @@ public class AnimalService {
                 createImgUrl(animal.getId()));
     }
 
+    /**
+     * Basicamente adiciona /images/{animalId} a url atual, ou seja é dinamica
+     * @return String
+     */
     private String createImgUrl(Long animalId) {
         var animal = repo.findById(animalId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não encontrado"));
