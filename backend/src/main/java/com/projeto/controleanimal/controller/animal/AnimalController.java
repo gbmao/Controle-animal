@@ -39,12 +39,12 @@ public class AnimalController {
         return service.getAnimal(animalId);
     }
 
+    //TODO retirar a logica de user do AnimalService
     @GetMapping("/all")
     public List<AnimalWithImgIdReturnDto> getAllAnimals(@AuthenticationPrincipal CustomUserDetails user) {
 
         return service.getAllAnimals(user.getId());
     }
-
 
 
     @GetMapping("search/{name}")
@@ -67,26 +67,33 @@ public class AnimalController {
     }
 
 
-    @DeleteMapping("/{id}")
-    public void deleteAnimal(@RequestHeader("x-api-key") String key, @PathVariable("id") Long id) {
+    @DeleteMapping("/{animalId}")
+    public void deleteAnimal(@RequestHeader("x-api-key") String key,
+                             @PathVariable("animalId") Long animalId,
+                             @AuthenticationPrincipal CustomUserDetails user) {
+        userService.checkAnimalId(user.getId(), animalId);
         ApiKeyValidator.check(key);
-        service.deleteAnimal(id);
+        service.deleteAnimal(animalId);
+        userService.deleteAnimalId(user.getId(), animalId);
     }
 
 
-    @PutMapping("/{id}")
-    public AnimalDto changeName(@RequestHeader("x-api-key") String key, @PathVariable("id") Long animalId,
-                                      @RequestBody AnimalUpdateDto animalDto) {
-
+    @PutMapping("/{animalId}")
+    public AnimalDto changeName(@RequestHeader("x-api-key") String key,
+                                @PathVariable("animalId") Long animalId,
+                                @RequestBody AnimalUpdateDto animalDto,
+                                @AuthenticationPrincipal CustomUserDetails user) {
+        userService.checkAnimalId(user.getId(), animalId);
         ApiKeyValidator.check(key);
 
         return service.changeAnimal(animalId, animalDto);
     }
 
     @GetMapping("/busca/{name}")
-    public List<AnimalDto> getListOfAnimals(@PathVariable String name) {
+    public List<AnimalDto> getListOfAnimals(@PathVariable String name,
+                                            @AuthenticationPrincipal CustomUserDetails user) {
 
-        return service.getListOfAnimals(name);
+        return service.getListOfAnimals(name, user.getId());
     }
 
 }

@@ -27,7 +27,7 @@ public class AnimalService {
 
     private final AnimalValidator validator;
     private final AnimalRepository repo;
-    private final UserRepository userRepository;
+    private final UserRepository userRepository; //TODO mover logico de Appuser para local propio
 
     public AnimalService(AnimalRepository repo, AnimalValidator validator, UserRepository userRepository) {
         this.repo = repo;
@@ -116,8 +116,13 @@ public class AnimalService {
                 .getId();
     }
 
-    public List<AnimalDto> getListOfAnimals(String name) {
+    public List<AnimalDto> getListOfAnimals(String name, Long userId) { //TODO enviar a lista de id do User e iterar somente lá
+
+        var user = userRepository.findById(userId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Como voce chegou ate aqui?"));
+
         return repo.findByNameContainingIgnoreCase(name).stream()
+                .filter(a -> user.getAnimalIds().contains(a.getId()))
                 .limit(10) // limitar para um numero maximo
                 .map(a -> new AnimalDto(
                         a.getId(),
