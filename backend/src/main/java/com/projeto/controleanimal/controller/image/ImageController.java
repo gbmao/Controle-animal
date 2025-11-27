@@ -64,8 +64,9 @@ public class ImageController {
 
     @GetMapping(value = "/{animalId}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<ByteArrayResource> downloadImage(@PathVariable Long animalId,
+                                                           @RequestHeader("x-api-key") String key,
                                                            @AuthenticationPrincipal CustomUserDetails user) {
-
+        ApiKeyValidator.check(key);
         userService.checkAnimalId(user.getId(), animalId);
 
         return service.getImgByAnimalId(animalId);
