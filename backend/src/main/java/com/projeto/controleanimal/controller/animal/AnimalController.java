@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class AnimalController {
     private final AnimalService service;
-    private final UserRepository userRepository;
+    private final UserRepository userRepository; //TODO retirar isso aqui
 
     public AnimalController(AnimalService service, UserRepository userRepository) {
         this.service = service;
@@ -41,7 +41,7 @@ public class AnimalController {
         return service.getAllAnimals();
     }
 
-
+        //TODO remover isso aqui
     @GetMapping("/me")
     public String getMe(@AuthenticationPrincipal CustomUserDetails user) {
         AppUser user1 = userRepository.findByLogin(user.getUsername()).orElseThrow();
