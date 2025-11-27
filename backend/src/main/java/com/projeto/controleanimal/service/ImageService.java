@@ -67,6 +67,10 @@ public class ImageService {
 
         Animal animal = findAnimalOrThrow(animalId);
 
+        if (animal.getImage() == null) {
+            return null;
+        }
+
         var imageBytes = Optional.ofNullable(animal.getImage())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Animal não possui imagem!"))
                 .getContent();

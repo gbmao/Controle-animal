@@ -1,9 +1,6 @@
 package com.projeto.controleanimal.service;
 
-import com.projeto.controleanimal.dto.AnimalCreationDto;
-import com.projeto.controleanimal.dto.AnimalDto;
-import com.projeto.controleanimal.dto.AnimalUpdateDto;
-import com.projeto.controleanimal.dto.AnimalWithImgIdReturnDto;
+import com.projeto.controleanimal.dto.*;
 import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.AppUser;
 import com.projeto.controleanimal.model.Cat;
@@ -16,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -118,7 +117,7 @@ public class AnimalService {
                 .getId();
     }
 
-    public List<AnimalDto> getListOfAnimals(String name, Long userId) { //TODO enviar a lista de id do User e iterar somente lá
+    public List<AnimalWithImgDto> getListOfAnimals(String name, Long userId) { //TODO enviar a lista de id do User e iterar somente lá
 
         var user = userRepository.findById(userId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Como voce chegou ate aqui?"));
@@ -126,13 +125,43 @@ public class AnimalService {
         return repo.findByNameContainingIgnoreCase(name).stream()
                 .filter(a -> user.getAnimalIds().contains(a.getId()))
                 .limit(10) // limitar para um numero maximo
-                .map(a -> new AnimalDto(
+                .map(a -> new AnimalWithImgDto(
                         a.getId(),
                         a.getName(),
                         a.getAge(),
-                        a.getClass().getSimpleName()))
+                        a.getClass().getSimpleName(),
+                        createImgUrl(a.getId())))
                 .toList();
 
+    }
+
+    public AnimalWithImgDto getAnimalWithImage(Long animalId) {
+        var animal = repo.findById(animalId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não encontrado"));
+
+
+        return new AnimalWithImgDto(animal.getId(),
+                animal.getName(),
+                animal.getAge(),
+                animal.getClass().getSimpleName(),
+                createImgUrl(animal.getId()));
+    }
+
+    /**
+     * Basicamente adiciona /images/{animalId} a url atual, ou seja é dinamica
+     * @return String
+     */
+    private String createImgUrl(Long animalId) {
+        var animal = repo.findById(animalId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não encontrado"));
+
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .build()
+                .toUriString();
+
+        return animal.getImage() == null ?
+                null :
+                baseUrl + "/images/" + animal.getId();
     }
 
     private Animal createAnimalEntity(AnimalCreationDto animalDto) {

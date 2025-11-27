@@ -1,11 +1,13 @@
 package com.projeto.controleanimal.controller.animal;
 
+import com.projeto.controleanimal.dto.*;
 import com.projeto.controleanimal.dto.AnimalCreationDto;
 import com.projeto.controleanimal.dto.AnimalDto;
 import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.dto.AnimalWithImgIdReturnDto;
 import com.projeto.controleanimal.model.AppUser;
 import com.projeto.controleanimal.repository.UserRepository;
+import com.projeto.controleanimal.security.CustomUserDetails;
 import com.projeto.controleanimal.security.CustomUserDetails;
 import com.projeto.controleanimal.service.AnimalService;
 import com.projeto.controleanimal.service.UserService;
@@ -33,10 +35,10 @@ public class AnimalController {
 
 
     @GetMapping("/{animalId}")
-    public AnimalDto getAnimal(@PathVariable("animalId") Long animalId,
+    public AnimalWithImgDto getAnimal(@PathVariable("animalId") Long animalId,
                                @AuthenticationPrincipal CustomUserDetails user) {
         userService.checkAnimalId(user.getId(), animalId);
-        return service.getAnimal(animalId);
+        return service.getAnimalWithImage(animalId);
     }
 
     //TODO retirar a logica de user do AnimalService
@@ -48,7 +50,7 @@ public class AnimalController {
 
 
     @GetMapping("search/{name}")
-    public AnimalDto getAnimalByName(@PathVariable("name") String name,
+    public AnimalWithImgDto getAnimalByName(@PathVariable("name") String name,
                                      @AuthenticationPrincipal CustomUserDetails user) {
 
         return getAnimal(service.getIdByName(name), user);
@@ -90,7 +92,7 @@ public class AnimalController {
     }
 
     @GetMapping("/busca/{name}")
-    public List<AnimalDto> getListOfAnimals(@PathVariable String name,
+    public List<AnimalWithImgDto> getListOfAnimals(@PathVariable String name,
                                             @AuthenticationPrincipal CustomUserDetails user) {
 
         return service.getListOfAnimals(name, user.getId());
