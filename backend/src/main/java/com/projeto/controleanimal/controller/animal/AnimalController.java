@@ -63,11 +63,12 @@ public class AnimalController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public AnimalWithImgIdReturnDto addAnimal(@RequestHeader("x-api-key") String key,
                                               @RequestPart("data") AnimalCreationDto dto,
-                                              @RequestParam("multipartImage") MultipartFile multipartImage) throws Exception {
+                                              @RequestParam("multipartImage") MultipartFile multipartImage,
+                                              @AuthenticationPrincipal CustomUserDetails user) throws Exception {
 
         ApiKeyValidator.check(key);
 
-        return service.addAnimal(dto, multipartImage);
+        return service.addAnimal(dto, multipartImage, user.getId());
     }
 
 

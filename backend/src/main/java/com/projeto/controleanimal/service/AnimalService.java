@@ -5,6 +5,7 @@ import com.projeto.controleanimal.dto.AnimalDto;
 import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.dto.AnimalWithImgIdReturnDto;
 import com.projeto.controleanimal.model.Animal;
+import com.projeto.controleanimal.model.AppUser;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.model.Image;
 import com.projeto.controleanimal.repository.AnimalRepository;
@@ -37,7 +38,7 @@ public class AnimalService {
     public List<AnimalWithImgIdReturnDto> getAllAnimals(Long userId) {
         var user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Como voce chegou ate aqui?"));
 
-        if(user.getAnimalIds().isEmpty()) return List.of(); //retorna uma lista vazia, será a melhor resposta???
+        if (user.getAnimalIds().isEmpty()) return List.of(); //retorna uma lista vazia, será a melhor resposta???
 
         return user.getAnimalIds().stream()
                 .map(repo::findById)
@@ -61,18 +62,19 @@ public class AnimalService {
     }
 
 
-    public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto, MultipartFile multipartImage) throws Exception {
+    public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto, MultipartFile multipartImage, Long userId) throws Exception {
+
 
         validator.validate(animalDto.name());
         validator.validate(animalDto.birthDate());
 
         Animal animal = createAnimalEntity(animalDto);
 
-        if (multipartImage == null || multipartImage.isEmpty()) return saveAndReturnDto(animal);
+        if (multipartImage == null || multipartImage.isEmpty()) return saveAndReturnDto(animal, userId);
 
         Image dbImage = createImageEntity(multipartImage);
 
-        return saveAndReturnDto(animal, dbImage);
+        return saveAndReturnDto(animal, dbImage, userId);
     }
 
     public void deleteAnimal(Long id) {
@@ -143,20 +145,33 @@ public class AnimalService {
         return dbImage;
     }
 
-    private AnimalWithImgIdReturnDto saveAndReturnDto(Animal animal) {
+    private AnimalWithImgIdReturnDto saveAndReturnDto(Animal animal, Long userId) {
         repo.save(animal);
+        //colocando o id do animal no User
+        saveAnimalIdToUser(animal, userId);
+
         return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),
                 animal.getAge(),
                 animal.getClass().getSimpleName(),
                 null);
     }
 
-    private AnimalWithImgIdReturnDto saveAndReturnDto(Animal animal, Image dbImage) {
+    private AnimalWithImgIdReturnDto saveAndReturnDto(Animal animal, Image dbImage, Long userId) {
         dbImage.setAnimal(animal);
         animal.setImage(dbImage);
 
         repo.save(animal);
+        //colocando o id do animal no User
+        saveAnimalIdToUser(animal, userId);
         return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName(),
                 animal.getImage().getId());
+    }
+
+    private void saveAnimalIdToUser(Animal animal, Long userId) {
+
+        var user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Como voce chegou ate aqui?"));
+
+        user.addAnimal(animal.getId());
+        userRepository.save(user);
     }
 }
