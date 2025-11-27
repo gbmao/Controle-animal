@@ -1,6 +1,5 @@
 export async function handler(event) {
     const API_URL = process.env.VITE_API_URL;
-
     const nome = event.queryStringParameters.nome;
 
     if (!nome) {
@@ -11,7 +10,7 @@ export async function handler(event) {
     }
 
     try {
-        const resp = await fetch(`${API_URL}/api/search/${encodeURIComponent(nome)}`);
+        const resp = await fetch(`${API_URL}/api/busca/${encodeURIComponent(nome)}`);
 
         if (!resp.ok) {
             return {
@@ -20,12 +19,12 @@ export async function handler(event) {
             };
         }
 
-        const gato = await resp.json();
+        const lista = await resp.json();
 
-        // Sempre retornar array
+        // já é uma lista!
         return {
             statusCode: 200,
-            body: JSON.stringify([gato])
+            body: JSON.stringify(lista)
         };
 
     } catch (err) {
