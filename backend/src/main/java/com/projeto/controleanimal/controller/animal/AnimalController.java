@@ -36,9 +36,9 @@ public class AnimalController {
     }
 
     @GetMapping("/all")
-    public List<AnimalWithImgIdReturnDto> getAllAnimals() {
+    public List<AnimalWithImgIdReturnDto> getAllAnimals(@AuthenticationPrincipal CustomUserDetails user) {
 
-        return service.getAllAnimals();
+        return service.getAllAnimals(user.getId());
     }
 
         //TODO remover isso aqui

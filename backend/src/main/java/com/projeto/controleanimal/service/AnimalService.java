@@ -8,7 +8,9 @@ import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.model.Image;
 import com.projeto.controleanimal.repository.AnimalRepository;
+import com.projeto.controleanimal.repository.UserRepository;
 import com.projeto.controleanimal.util.AnimalValidator;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -23,20 +26,29 @@ public class AnimalService {
 
     private final AnimalValidator validator;
     private final AnimalRepository repo;
+    private final UserRepository userRepository;
 
-    public AnimalService(AnimalRepository repo, AnimalValidator validator) {
+    public AnimalService(AnimalRepository repo, AnimalValidator validator, UserRepository userRepository) {
         this.repo = repo;
         this.validator = validator;
+        this.userRepository = userRepository;
     }
 
-    public List<AnimalWithImgIdReturnDto> getAllAnimals() { //TODO avoid stream for better performance
-        return repo.findAll().stream()
+    public List<AnimalWithImgIdReturnDto> getAllAnimals(Long userId) {
+        var user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Como voce chegou ate aqui?"));
+
+        if(user.getAnimalIds().isEmpty()) return List.of(); //retorna uma lista vazia, será a melhor resposta???
+
+        return user.getAnimalIds().stream()
+                .map(repo::findById)
+                .flatMap(Optional::stream)
                 .map(s -> new AnimalWithImgIdReturnDto(s.getId(),
                         s.getName(),
                         s.getAge(),
                         s.getClass().getSimpleName()
-                        ,s.getImage() == null ? -1 : s.getImage().getId()))
+                        , s.getImage() == null ? -1 : s.getImage().getId()))
                 .toList();
+
     }
 
 
@@ -98,7 +110,7 @@ public class AnimalService {
     public Long getIdByName(String name) {
 
         return repo.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Nome não encotnrado!"))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nome não encotnrado!"))
                 .getId();
     }
 
