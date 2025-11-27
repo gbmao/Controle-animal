@@ -8,6 +8,7 @@ import com.projeto.controleanimal.model.AppUser;
 import com.projeto.controleanimal.repository.UserRepository;
 import com.projeto.controleanimal.security.CustomUserDetails;
 import com.projeto.controleanimal.service.AnimalService;
+import com.projeto.controleanimal.service.UserService;
 import com.projeto.controleanimal.util.ApiKeyValidator;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,17 +23,20 @@ import java.util.List;
 @RequestMapping("/api")
 public class AnimalController {
     private final AnimalService service;
-    private final UserRepository userRepository; //TODO retirar isso aqui
+    private final UserService userService;
 
-    public AnimalController(AnimalService service, UserRepository userRepository) {
+    public AnimalController(AnimalService service, UserService userService) {
         this.service = service;
-        this.userRepository = userRepository;
+
+        this.userService = userService;
     }
 
 
-    @GetMapping("/{id}")
-    public AnimalDto getAnimal(@PathVariable("id") Long id) {
-        return service.getAnimal(id);
+    @GetMapping("/{animalId}")
+    public AnimalDto getAnimal(@PathVariable("animalId") Long animalId,
+                               @AuthenticationPrincipal CustomUserDetails user) {
+        userService.checkAnimalId(user.getId(), animalId);
+        return service.getAnimal(animalId);
     }
 
     @GetMapping("/all")
@@ -41,22 +45,13 @@ public class AnimalController {
         return service.getAllAnimals(user.getId());
     }
 
-        //TODO remover isso aqui
-    @GetMapping("/me")
-    public String getMe(@AuthenticationPrincipal CustomUserDetails user) {
-        AppUser user1 = userRepository.findByLogin(user.getUsername()).orElseThrow();
-
-        return "Seu ID é: " + user.getId() +
-                "name: " + user1.getUsername() +
-                "Email: " + user1.getEmail() +
-                "Password: " + user1.getPassword();
-    }
 
 
     @GetMapping("search/{name}")
-    public AnimalDto getAnimalByName(@PathVariable("name") String name) {
+    public AnimalDto getAnimalByName(@PathVariable("name") String name,
+                                     @AuthenticationPrincipal CustomUserDetails user) {
 
-        return getAnimal(service.getIdByName(name));
+        return getAnimal(service.getIdByName(name), user);
     }
 
 

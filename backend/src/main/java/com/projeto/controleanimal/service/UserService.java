@@ -3,8 +3,10 @@ package com.projeto.controleanimal.service;
 import com.projeto.controleanimal.dto.appUser.UserCreationDto;
 import com.projeto.controleanimal.model.AppUser;
 import com.projeto.controleanimal.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserService {
@@ -28,5 +30,12 @@ public class UserService {
         appUser.getRoles().add("APPUSER");
 
         repo.save(appUser);
+    }
+
+    public void checkAnimalId(Long user, Long animalId) {
+
+        if(!repo.findById(user)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"User nao encontrado"))
+                .getAnimalIds().contains(animalId)) throw new  ResponseStatusException(HttpStatus.FORBIDDEN,"Este User nao possui animal com o id: " + animalId);
     }
 }
