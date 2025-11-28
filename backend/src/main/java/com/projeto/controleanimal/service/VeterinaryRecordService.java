@@ -9,6 +9,7 @@ import com.projeto.controleanimal.model.vetRecord.VetVisits;
 import com.projeto.controleanimal.model.vetRecord.VeterinaryRecord;
 import com.projeto.controleanimal.repository.AnimalRepository;
 import com.projeto.controleanimal.repository.VeterinaryRecordRepository;
+import org.apache.tomcat.util.http.fileupload.util.Streams;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,6 +20,7 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalField;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -34,8 +36,8 @@ public class VeterinaryRecordService {
     }
 
     public VeterinaryRecordDto createVeterinaryRecord(Long idAnimal) { //TODO change to return DATA from VeterinaryRecord
-        Animal animal = animalRepo.findById(idAnimal)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não existe"));
+
+        Animal animal = getAnimal(idAnimal);
 
         VeterinaryRecord vetRec = new VeterinaryRecord();
         vetRec.setAnimal(animal);
@@ -50,8 +52,8 @@ public class VeterinaryRecordService {
     }
 
     public VetVisitReturnDto createVetVisit(VetVisitDto vetVisitDto, Long idAnimal) {
-        Animal animal = animalRepo.findById(idAnimal)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não existe"));
+        Animal animal = getAnimal(idAnimal);
+
         if (animal.getVeterinaryRecord() == null) {
             createVeterinaryRecord(animal.getId());
         }
@@ -77,9 +79,25 @@ public class VeterinaryRecordService {
 
     }
 
+    public List<VetVisitReturnDto> getAllVetVisits(Long idAnimal) {
+        Animal animal = getAnimal(idAnimal);
+
+        if(animal.getVeterinaryRecord() == null || animal.getVeterinaryRecord().getVetVisitsList() == null) return List.of();
+
+        return animal.getVeterinaryRecord()
+                .getVetVisitsList()
+                .stream()
+                .map(vetVisit -> new VetVisitReturnDto(vetVisit.vetName(),
+                        vetVisit.visitDate(),
+                        vetVisit.procedure(),
+                        vetVisit.notes(),
+                        vetVisit.weight(),
+                        vetVisit.nextVisit()))
+                .toList();
+    }
+
     private Optional<Double> grabFromLastWeight(Long idAnimal) {
-        Animal animal = animalRepo.findById(idAnimal)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não existe"));
+        Animal animal = getAnimal(idAnimal);
 
 
         return animal.getVeterinaryRecord().getVetVisitsList().stream()
@@ -87,5 +105,10 @@ public class VeterinaryRecordService {
                 .map(VetVisits::weight)
                 .filter(Objects::nonNull)
                 .findFirst();
+    }
+
+    private Animal getAnimal(Long idAnimal) {
+        return animalRepo.findById(idAnimal)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não existe"));
     }
 }

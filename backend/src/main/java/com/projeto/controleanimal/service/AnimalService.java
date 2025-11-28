@@ -2,18 +2,23 @@ package com.projeto.controleanimal.service;
 
 import com.projeto.controleanimal.dto.*;
 import com.projeto.controleanimal.model.Animal;
+import com.projeto.controleanimal.model.AppUser;
 import com.projeto.controleanimal.model.Cat;
 import com.projeto.controleanimal.model.Image;
 import com.projeto.controleanimal.repository.AnimalRepository;
+import com.projeto.controleanimal.repository.UserRepository;
 import com.projeto.controleanimal.util.AnimalValidator;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -21,20 +26,29 @@ public class AnimalService {
 
     private final AnimalValidator validator;
     private final AnimalRepository repo;
+    private final UserRepository userRepository; //TODO mover logico de Appuser para local propio
 
-    public AnimalService(AnimalRepository repo, AnimalValidator validator) {
+    public AnimalService(AnimalRepository repo, AnimalValidator validator, UserRepository userRepository) {
         this.repo = repo;
         this.validator = validator;
+        this.userRepository = userRepository;
     }
 
-    public List<AnimalWithImgIdReturnDto> getAllAnimals() { //TODO avoid stream for better performance
-        return repo.findAll().stream()
+    public List<AnimalWithImgIdReturnDto> getAllAnimals(Long userId) {
+        var user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Como voce chegou ate aqui?"));
+
+        if (user.getAnimalIds().isEmpty()) return List.of(); //retorna uma lista vazia, será a melhor resposta???
+
+        return user.getAnimalIds().stream()
+                .map(repo::findById)
+                .flatMap(Optional::stream)
                 .map(s -> new AnimalWithImgIdReturnDto(s.getId(),
                         s.getName(),
                         s.getAge(),
                         s.getClass().getSimpleName()
-                        ,s.getImage() == null ? -1 : s.getImage().getId()))
+                        , s.getImage() == null ? -1 : s.getImage().getId()))
                 .toList();
+
     }
 
 
@@ -47,22 +61,25 @@ public class AnimalService {
     }
 
 
-    public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto, MultipartFile multipartImage) throws Exception {
+    public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto, MultipartFile multipartImage, Long userId) throws Exception {
+
 
         validator.validate(animalDto.name());
         validator.validate(animalDto.birthDate());
 
         Animal animal = createAnimalEntity(animalDto);
 
-        if (multipartImage == null || multipartImage.isEmpty()) return saveAndReturnDto(animal);
+        if (multipartImage == null || multipartImage.isEmpty()) return saveAndReturnDto(animal, userId);
 
         Image dbImage = createImageEntity(multipartImage);
 
-        return saveAndReturnDto(animal, dbImage);
+        return saveAndReturnDto(animal, dbImage, userId);
     }
 
     public void deleteAnimal(Long id) {
-        Animal animal = repo.findById(id).orElseThrow();
+        Animal animal = repo.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NO_CONTENT,"User Possui esse id, porem nao existe, no database, animal com o id: " + id)
+        );
 
         animal.setImage(null);
 
@@ -96,12 +113,17 @@ public class AnimalService {
     public Long getIdByName(String name) {
 
         return repo.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Nome não encotnrado!"))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nome não encotnrado!"))
                 .getId();
     }
 
-    public List<AnimalWithImgDto> getListOfAnimals(String name) {
+    public List<AnimalWithImgDto> getListOfAnimals(String name, Long userId) { //TODO enviar a lista de id do User e iterar somente lá
+
+        var user = userRepository.findById(userId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Como voce chegou ate aqui?"));
+
         return repo.findByNameContainingIgnoreCase(name).stream()
+                .filter(a -> user.getAnimalIds().contains(a.getId()))
                 .limit(10) // limitar para um numero maximo
                 .map(a -> new AnimalWithImgDto(
                         a.getId(),
@@ -125,6 +147,10 @@ public class AnimalService {
                 createImgUrl(animal.getId()));
     }
 
+    /**
+     * Basicamente adiciona /images/{animalId} a url atual, ou seja é dinamica
+     * @return String
+     */
     private String createImgUrl(Long animalId) {
         var animal = repo.findById(animalId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não encontrado"));
@@ -155,20 +181,33 @@ public class AnimalService {
         return dbImage;
     }
 
-    private AnimalWithImgIdReturnDto saveAndReturnDto(Animal animal) {
+    private AnimalWithImgIdReturnDto saveAndReturnDto(Animal animal, Long userId) {
         repo.save(animal);
+        //colocando o id do animal no User
+        saveAnimalIdToUser(animal, userId);
+
         return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),
                 animal.getAge(),
                 animal.getClass().getSimpleName(),
                 null);
     }
 
-    private AnimalWithImgIdReturnDto saveAndReturnDto(Animal animal, Image dbImage) {
+    private AnimalWithImgIdReturnDto saveAndReturnDto(Animal animal, Image dbImage, Long userId) {
         dbImage.setAnimal(animal);
         animal.setImage(dbImage);
 
         repo.save(animal);
+        //colocando o id do animal no User
+        saveAnimalIdToUser(animal, userId);
         return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName(),
                 animal.getImage().getId());
+    }
+
+    private void saveAnimalIdToUser(Animal animal, Long userId) {
+
+        var user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Como voce chegou ate aqui?"));
+
+        user.addAnimal(animal.getId());
+        userRepository.save(user);
     }
 }
