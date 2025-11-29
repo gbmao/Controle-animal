@@ -27,7 +27,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/**","/images/**").authenticated()
                         .anyRequest().permitAll()
                 )
-                .formLogin(withDefaults());
+                .formLogin(withDefaults())
+                .httpBasic(AbstractHttpConfigurer::disable);
         return http.build();
     }
 
