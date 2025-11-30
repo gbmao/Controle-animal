@@ -32,7 +32,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
             String jwt = parseJwt(request);
+
+            // --- NOVO LOG DE DEBUG ---
+            logger.info("JWT extraído: {}", jwt != null ? "Sim" : "Não/Null");
+            // ------------------------
+
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+
+                // --- NOVO LOG DE DEBUG ---
+                logger.info("Validação JWT (isValid): {}", jwtUtils.validateJwtToken(jwt));
+                // ------------------------
+
                 String login = jwtUtils.getUserNameFromJwtToken(jwt);
 
                 CustomUserDetails customUserDetails = customUserDetailsServiceImpl.loadUserByUsername(login);
