@@ -2,9 +2,7 @@ package com.projeto.controleanimal.controller.auth;
 
 
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.projeto.controleanimal.controller.auth.payload.request.SignupRequest;
@@ -71,7 +69,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerAppUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (UserRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (UserRepository.existsByLogin(signUpRequest.getLogin())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Já exite AppUser com esse nome!"));
@@ -84,7 +82,7 @@ public class AuthController {
         }
 
         // Create new AppUser's account
-        AppUser AppUser = new AppUser(signUpRequest.getUsername(),
+        AppUser AppUser = new AppUser(signUpRequest.getLogin(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
 

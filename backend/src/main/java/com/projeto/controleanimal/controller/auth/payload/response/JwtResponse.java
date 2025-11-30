@@ -1,18 +1,16 @@
 package com.projeto.controleanimal.controller.auth.payload.response;
 
-import java.util.List;
-
 public class JwtResponse {
     private String token;
     private String type = "Bearer";
     private Long id;
-    private String username;
+    private String login;
     private String email;
 
-    public JwtResponse(String accessToken, Long id, String username, String email) {
+    public JwtResponse(String accessToken, Long id, String login, String email) {
         this.token = accessToken;
         this.id = id;
-        this.username = username;
+        this.login = login;
         this.email = email;
     }
 
@@ -48,11 +46,11 @@ public class JwtResponse {
         this.email = email;
     }
 
-    public String getUsername() {
-        return username;
+    public String getLogin() {
+        return login;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setLogin(String login) {
+        this.login = login;
     }
 }
