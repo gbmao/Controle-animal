@@ -1,7 +1,6 @@
 package com.projeto.controleanimal.service;
 
-import com.projeto.controleanimal.model.AppUser;
-import com.projeto.controleanimal.security.CustomUserDetails;
+import com.projeto.controleanimal.security.service.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

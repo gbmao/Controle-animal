@@ -11,7 +11,8 @@ import com.projeto.controleanimal.controller.auth.payload.response.MessageRespon
 import com.projeto.controleanimal.dto.loginRequest.LoginRequest;
 import com.projeto.controleanimal.model.AppUser;
 import com.projeto.controleanimal.repository.UserRepository;
-import com.projeto.controleanimal.security.CustomUserDetails;
+import com.projeto.controleanimal.security.service.CustomUserDetails;
+import com.projeto.controleanimal.security.jwt.JwtUtils;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;

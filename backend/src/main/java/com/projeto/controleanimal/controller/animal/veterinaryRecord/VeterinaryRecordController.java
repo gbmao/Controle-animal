@@ -1,12 +1,9 @@
 package com.projeto.controleanimal.controller.animal.veterinaryRecord;
 
-import com.projeto.controleanimal.dto.veterinaryRecordDto.NextVisitDto;
 import com.projeto.controleanimal.dto.veterinaryRecordDto.VetVisitDto;
 import com.projeto.controleanimal.dto.veterinaryRecordDto.VetVisitReturnDto;
 import com.projeto.controleanimal.dto.veterinaryRecordDto.VeterinaryRecordDto;
-import com.projeto.controleanimal.model.vetRecord.VetVisits;
-import com.projeto.controleanimal.security.CustomUserDetails;
-import com.projeto.controleanimal.service.AnimalService;
+import com.projeto.controleanimal.security.service.CustomUserDetails;
 import com.projeto.controleanimal.service.UserService;
 import com.projeto.controleanimal.service.VeterinaryRecordService;
 import com.projeto.controleanimal.util.ApiKeyValidator;

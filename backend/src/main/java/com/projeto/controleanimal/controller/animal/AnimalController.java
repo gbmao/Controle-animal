@@ -5,17 +5,12 @@ import com.projeto.controleanimal.dto.AnimalCreationDto;
 import com.projeto.controleanimal.dto.AnimalDto;
 import com.projeto.controleanimal.dto.AnimalUpdateDto;
 import com.projeto.controleanimal.dto.AnimalWithImgIdReturnDto;
-import com.projeto.controleanimal.model.AppUser;
-import com.projeto.controleanimal.repository.UserRepository;
-import com.projeto.controleanimal.security.CustomUserDetails;
-import com.projeto.controleanimal.security.CustomUserDetails;
+import com.projeto.controleanimal.security.service.CustomUserDetails;
 import com.projeto.controleanimal.service.AnimalService;
 import com.projeto.controleanimal.service.UserService;
 import com.projeto.controleanimal.util.ApiKeyValidator;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

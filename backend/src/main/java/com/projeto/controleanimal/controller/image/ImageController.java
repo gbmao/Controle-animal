@@ -1,24 +1,19 @@
 package com.projeto.controleanimal.controller.image;
 
 import com.projeto.controleanimal.dto.imageDto.ImageInfoDto;
-import com.projeto.controleanimal.model.Animal;
 import com.projeto.controleanimal.repository.AnimalRepository;
 import com.projeto.controleanimal.repository.ImageDpRepository;
-import com.projeto.controleanimal.security.CustomUserDetails;
+import com.projeto.controleanimal.security.service.CustomUserDetails;
 import com.projeto.controleanimal.service.ImageService;
 import com.projeto.controleanimal.service.UserService;
 import com.projeto.controleanimal.util.ApiKeyValidator;
-import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import com.projeto.controleanimal.model.Image;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 

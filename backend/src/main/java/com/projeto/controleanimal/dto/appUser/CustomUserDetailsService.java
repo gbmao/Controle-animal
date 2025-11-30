@@ -1,7 +1,7 @@
 package com.projeto.controleanimal.dto.appUser;
 
 import com.projeto.controleanimal.repository.UserRepository;
-import com.projeto.controleanimal.security.CustomUserDetails;
+import com.projeto.controleanimal.security.service.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

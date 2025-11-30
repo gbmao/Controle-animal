@@ -1,4 +1,4 @@
-package com.projeto.controleanimal.security;
+package com.projeto.controleanimal.security.service;
 
 import com.projeto.controleanimal.model.AppUser;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +18,10 @@ public class CustomUserDetails implements UserDetails {
 
     public Long getId() {
         return user.getId();
+    }
+
+    public static CustomUserDetails build(AppUser user) {
+        return new CustomUserDetails(user);
     }
 
     @Override
