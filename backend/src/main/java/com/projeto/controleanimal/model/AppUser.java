@@ -33,7 +33,7 @@ public class AppUser implements UserDetails {
     public AppUser() {
     }
 
-    public AppUser(String email, String login, String password) {
+    public AppUser(String login, String email, String password) {
 
         this.email = email;
         this.login = login;
