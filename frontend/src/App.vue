@@ -20,6 +20,7 @@
     <RouterView />
   </main>
   <NavMenuMobile />
+
 </template>
 
 <script setup>

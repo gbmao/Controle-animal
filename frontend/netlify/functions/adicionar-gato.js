@@ -1,32 +1,55 @@
 export const handler = async (event) => {
-    try {
-        const API_URL = process.env.VITE_API_URL;
-        const API_KEY = process.env.VITE_API_KEY;
+  try {
+    const API_URL = process.env.VITE_API_URL;
+    const API_KEY = process.env.VITE_API_KEY;
 
-        // AQUI: event.body é base64 quando multipart
-        const body = Buffer.from(event.body, "base64");
+    // Cookies do navegador
+    const cookies = event.headers.cookie || "";
 
-        const resp = await fetch(`${API_URL}/api`, {
-        method: "POST",
-        headers: {
-            "Content-Type": event.headers["content-type"], // repassa o tipo multipart
-            "x-api-key": API_KEY
-        },
-        body
-        });
+    console.log("===== COOKIES RECEBIDOS DO NAVEGADOR =====");
+console.log(event.headers.cookie);
 
-        const text = await resp.text();
+console.log("===== COOKIES ENVIADOS AO BACKEND =====");
+console.log(cookies);
 
-        return {
-        statusCode: resp.status,
-        body: text
-        };
 
-    } catch (err) {
-        console.error("Erro na Netlify Function:", err);
-        return {
-        statusCode: 500,
-        body: JSON.stringify({ error: err.message })
-        };
-    }
+    // CONTENT TYPE verdadeiro do multipart enviado pelo navegador
+    const contentType = event.headers["content-type"];
+
+    // 🔥 MULTIPART + NETLIFY SEMPRE VEM BASE64 → precisa decodificar
+    const bodyBuffer = event.isBase64Encoded
+      ? Buffer.from(event.body, "base64")
+      : Buffer.from(event.body);
+
+    console.log("BODY BUFFER SIZE:", bodyBuffer.length);
+
+    // 🔥 IMPORTANTE: NÃO DEFINIR Content-Type MANUALMENTE!
+    // O boundary precisa ser preservado pelo fetch nativo.
+    const resp = await fetch(`${API_URL}/api`, {
+      method: "POST",
+      headers: {
+        "x-api-key": API_KEY,
+        "Cookie": cookies,
+        "Content-Type": contentType   // agora sim, com boundary original
+      },
+      body: bodyBuffer
+    });
+
+    const text = await resp.text();
+
+    return {
+      statusCode: resp.status,
+      headers: {
+        "Content-Type": resp.headers.get("content-type") || "application/json"
+      },
+      body: text
+    };
+
+  } catch (err) {
+    console.error("Erro na Netlify Function:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: err.message })
+    };
+  }
 };

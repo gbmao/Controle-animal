@@ -94,9 +94,11 @@ async function adicionarAnimal(animal, imagem) {
   if (imagem) formData.append("multipartImage", imagem);
 
   const response = await fetch(`/.netlify/functions/adicionar-gato`, {
-    method: "POST",
-    body: formData
-  });
+  method: "POST",
+  credentials: "include", // ESSENCIAL
+  body: formData
+});
+
 
   if(response.ok) {
     alert("Gato adicionado!")

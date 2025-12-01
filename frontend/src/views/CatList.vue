@@ -1,6 +1,7 @@
 <template>
   <section>
     <h2>Gatos registrados:</h2>
+
     <ul class="cat--list" v-if="gatos.length">
       <li v-for="gato in gatos" :key="gato.id">
         <BaseCard>
@@ -12,6 +13,7 @@
               alt="Foto do gato"
             />
             <div v-else class="cat--pics placeholder"></div>
+
             <div class="nome--gato--info" @click="toggleInfo(gato.id)">
               <h3 v-if="editando !== gato.id">{{ gato.name }}</h3>
               <input 
@@ -24,7 +26,7 @@
               <SetaIcon :class="{ rotacionado: aberto[gato.id] }" />
             </div>
           </div>
-          <!-- Aqui fecha ficha--gato -->
+
           <div class="gato-detalhes" v-show="aberto[gato.id]">
             <hr />
 
@@ -34,114 +36,119 @@
               <button v-if="editando !== gato.id" @click.stop="editarNome(gato)">
                 <BaseButton title="Editar nome do gato" icon="bi bi-pencil" variant="default" />
               </button>
+
               <button v-else @click.stop="salvarNome(gato)">
                 <BaseButton title="Salvar nome" icon="bi bi-check-lg" variant="default" />
               </button>
+
               <button @click="deletarGato(gato.id)">
                 <BaseButton title="Deletar gato" icon="bi bi-trash3" variant="default" />
               </button>
             </div>
           </div>
+
         </BaseCard>
       </li>
     </ul>
+
     <p v-else>Nenhum gato encontrado</p>
   </section>
 </template>
 
 <script setup>
-import BaseButton from '@/components/BaseButton.vue'
-import BaseCard from '@/components/BaseCard.vue'
-import SetaIcon from '@/components/SetaIcon.vue'
-import { ref, onMounted } from 'vue'
+import BaseButton from '@/components/BaseButton.vue';
+import BaseCard from '@/components/BaseCard.vue';
+import SetaIcon from '@/components/SetaIcon.vue';
+import { ref, onMounted } from 'vue';
+import api from "@/services/api";
 
-const API_URL = import.meta.env.VITE_API_URL
-const API_KEY = import.meta.env.VITE_API_KEY
-const gatos = ref([])
+const gatos = ref([]);
+const loading = ref(false);
+const error = ref(null);
 
-const aberto = ref({}) // controla quais IDs estão abertos
+const aberto = ref({});
+const editando = ref(null);
+const nomeEditado = ref("");
 
+// ---------- ABRIR/FECHAR DETALHES ----------
 function toggleInfo(id) {
-  aberto.value[id] = !aberto.value[id]
+  aberto.value[id] = !aberto.value[id];
 }
 
+// ---------- LISTAR GATOS ----------
 async function listarGatos() {
+  loading.value = true;
+
   try {
-    const resposta = await fetch("/.netlify/functions/listar-gatos")
+    const { data } = await api.get("/listar-gatos");
 
-    const data = await resposta.json()
+    console.log("RETORNO LISTAR-GATOS:", data);
 
-    // Aqui é só usar o data.sort para organizar por ordem alfabética pelo nome dos gatos
-    gatos.value = data.sort((a, b) => 
+    const lista = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.data)
+        ? data.data
+        : Array.isArray(data?.gatos)
+          ? data.gatos
+          : [];
+
+    gatos.value = lista.sort((a, b) =>
       a.name.localeCompare(b.name)
-    )
+    );
 
   } catch (err) {
-    alert('Erro ao listar gatos: ' + err.message)
+    error.value = "Erro ao listar gatos";
+    console.error(err);
+
+  } finally {
+    loading.value = false;
   }
 }
 
+// ---------- IMAGENS ----------
 function getImagemUrl(gato) {
-  if (gato.imgID === -1) {
-    return "/controle-animal.png" 
-  }
+  if (gato.imgID === -1) return "/controle-animal.png";
 
   return `/.netlify/functions/buscar-imagem?id=${gato.id}`;
-
 }
 
+// ---------- DELETAR GATO ----------
 async function deletarGato(id) {
-  if (!confirm('Deseja realmente deletar este gato?')) return
+  if (!confirm("Deseja realmente deletar este gato?")) return;
+
   try {
-    const resposta = await fetch(`/.netlify/functions/deletar-gato?id=${id}`)
-    if (resposta.ok) {
-      alert("Gato excluído")
-    }
-    if (!resposta.ok) throw new Error('Erro ao deletar gato')
-    listarGatos()
+    await api.delete(`/deletar-gato?id=${id}`);
+    alert("Gato excluído!");
+    listarGatos();
   } catch (err) {
-    alert(err.message)
+    alert("Erro ao deletar gato");
+    console.error(err);
   }
 }
 
-const editando = ref(null) // id do gato sendo editado
-const nomeEditado = ref("")
-
+// ---------- EDITAR NOME ----------
 function editarNome(gato) {
-  editando.value = gato.id
-  nomeEditado.value = gato.name
+  editando.value = gato.id;
+  nomeEditado.value = gato.name;
 }
 
 async function salvarNome(gato) {
   try {
-    // Atualiza o nome temporariamente para enviar ao backend
-    const gatoAtualizado = {
+    await api.put("/editar-gato", {
       ...gato,
       name: nomeEditado.value
-    };
-
-    const resposta = await fetch("/.netlify/functions/editar-gato", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(gatoAtualizado)
     });
 
-    if (!resposta.ok) throw new Error("Erro ao alterar nome")
+    alert("Nome alterado!");
 
-    if (resposta.ok) {
-      alert("Nome alterado com sucesso!")
-    }
+    editando.value = null;
+    listarGatos();
 
-    // Atualiza lista
-    await listarGatos()
-
-    // Sai do modo edição
-    editando.value = null
-
-  } catch(err) {
-    alert(err.message)
+  } catch (err) {
+    alert("Erro ao salvar nome");
+    console.error(err);
   }
 }
 
-onMounted(listarGatos)
+onMounted(listarGatos);
 </script>

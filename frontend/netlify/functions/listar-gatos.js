@@ -1,22 +1,28 @@
-export async function handler() {
-    try {
-        const response = await fetch(process.env.VITE_API_URL + "/api/all", {
-        headers: {
-            "x-api-key": process.env.VITE_API_KEY
-        }
-        });
+export async function handler(event) {
+  const API_URL = process.env.VITE_API_URL;
 
-        const data = await response.json();
+  try {
+    const resp = await fetch(`${API_URL}/api/all`, {
+      method: "GET",
+      headers: {
+        "Authorization": event.headers.authorization || "", // repassa o token
+        "Content-Type": "application/json"
+      }
+    });
 
-        return {
-        statusCode: 200,
-        body: JSON.stringify(data)
-        };
+    const text = await resp.text();
 
-    } catch (err) {
-        return {
-        statusCode: 500,
-        body: JSON.stringify({ error: err.message })
-        };
-    }
+    return {
+      statusCode: resp.status,
+      headers: { "Content-Type": "application/json" },
+      body: text
+    };
+
+  } catch (err) {
+    console.error("Erro listar-gatos:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: err.message })
+    };
+  }
 }

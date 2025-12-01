@@ -1,40 +1,36 @@
-    export async function handler(event) {
-    const API_URL = process.env.VITE_API_URL;
-    const API_KEY = process.env.VITE_API_KEY;
+export async function handler(event) {
+  const API_URL = process.env.VITE_API_URL;
 
-    const id = event.queryStringParameters.id;
+  const id = event.queryStringParameters?.id;
 
-    if (!id) {
-        return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "Missing id parameter" }),
-        };
-    }
+  if (!id) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: "Missing id parameter" }),
+    };
+  }
 
-    try {
-        const resp = await fetch(`${API_URL}/api/${id}`, {
-        method: "DELETE",
-        headers: {
-            "x-api-key": API_KEY
-        }
-        });
+  try {
+    const resp = await fetch(`${API_URL}/api/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": event.headers.authorization || ""
+      }
+    });
 
-        if (!resp.ok) {
-        return {
-            statusCode: resp.status,
-            body: JSON.stringify({ error: "Erro ao deletar no backend" }),
-        };
-        }
+    const text = await resp.text();
 
-        return {
-        statusCode: 200,
-        body: JSON.stringify({ ok: true }),
-        };
+    return {
+      statusCode: resp.status,
+      headers: { "Content-Type": "application/json" },
+      body: text
+    };
 
-    } catch (err) {
-        return {
-        statusCode: 500,
-        body: JSON.stringify({ error: err.message }),
-        };
-    }
-    }
+  } catch (err) {
+    console.error("Erro deletar-gato:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: err.message })
+    };
+  }
+}
