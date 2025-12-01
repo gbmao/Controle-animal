@@ -26,12 +26,10 @@
           </div>
           <!-- Aqui fecha ficha--gato -->
           <div class="gato-detalhes" v-show="aberto[gato.id]">
-            <p>Idade: {{ gato.age }}</p>
             <hr />
-            <h3>Registro veterinário</h3>
-            <p>Veterinário:</p>
-            <p>Vacinas:</p>
-            <p>Data da última vacina:</p>
+
+            <p>Idade: {{ gato.age }}</p>
+
             <div class="delete--buton">
               <button v-if="editando !== gato.id" @click.stop="editarNome(gato)">
                 <BaseButton title="Editar nome do gato" icon="bi bi-pencil" variant="default" />

@@ -15,21 +15,20 @@
     <ul v-if="resultado.length">
       <li v-for="gato in resultado" :key="gato.id">
         <BaseCard>
+          <div class="info--search">
+            <div class="cat--search">
+              <img v-if="gato.imagemUrl" :src="gato.imagemUrl" class="cat--pics" />
 
-          <!-- IMAGEM OU PLACEHOLDER -->
-        <img
-        v-if="gato.imgID !== -1"
-        :src="gato.imagemUrl"
-        class="cat--pics"
-        />
+              <!-- MOSTRA PLACEHOLDER SE NÃO EXISTIR -->
+              <div v-else class="cat--pics placeholder"></div>
 
-        <div v-else class="cat--pics placeholder"></div>
-
-          <div class="gato-detalhes">
-            <h3>{{ gato.name }}</h3>
-            <p>Idade: {{ gato.age }}</p>
-          </div>
-
+              <h3>{{ gato.name }}</h3>
+              </div>
+              <hr/>
+              <div class="gato-detalhes-search">
+                <p>Idade: {{ gato.age }}</p>
+              </div>
+            </div>
         </BaseCard>
       </li>
     </ul>
@@ -47,47 +46,6 @@ const busca = ref('')
 const resultado = ref([])
 const buscou = ref(false)
 
-// Função que busca a imagem individualmente via Netlify
-async function carregarImagem(gato) {
-  try {
-    const res = await fetch(`/.netlify/functions/buscar-imagem?id=${gato.id}`)
-
-    if (!res.ok) {
-      return {
-        ...gato,
-        imgID: -1,
-        imagemUrl: "/controle-animal.png"
-      }
-    }
-
-    const blob = await res.blob()
-
-    // 🔥 CASO CRÍTICO → quando o backend devolve imagem null
-    if (blob.size === 0) {
-      return {
-        ...gato,
-        imgID: -1,
-        imagemUrl: "/controle-animal.png"
-      }
-    }
-
-    const url = URL.createObjectURL(blob)
-
-    return {
-      ...gato,
-      imgID: gato.id,
-      imagemUrl: url
-    }
-
-  } catch (e) {
-    return {
-      ...gato,
-      imgID: -1,
-      imagemUrl: "/controle-animal.png"
-    }
-  }
-}
-
 async function buscarGato() {
   if (!busca.value.trim()) return
 
@@ -100,20 +58,19 @@ async function buscarGato() {
       return
     }
 
-    const dados = await resposta.json()
+    const gatos = await resposta.json()
 
-    // garante array
-    const gatos = Array.isArray(dados) ? dados : []
-
-    // 2️⃣ para cada gato → buscar imagem
-    const gatosComImagem = await Promise.all(
-      gatos.map(g => carregarImagem(g))
-    )
-
-    resultado.value = gatosComImagem
+resultado.value = gatos.map(g => {
+  console.log("🐱 Dados recebidos do backend:", g)
+  console.log("📸 URL gerada pelo backend (imagemUrl):", g.imagemUrl)
+  return {
+    ...g,
+    imagemUrl: g.imagemUrl || null
+  }
+})
 
   } catch (err) {
-    alert('Erro ao buscar gato: ' + err.message)
+    alert("Erro ao buscar gato: " + err.message)
     resultado.value = []
   } finally {
     buscou.value = true

@@ -1,7 +1,6 @@
-export async function handler(event) {
+exports.handler = async function(event) {
     const API_URL = process.env.VITE_API_URL;
-
-    const nome = event.queryStringParameters.nome;
+    const nome = event.queryStringParameters?.nome;
 
     if (!nome) {
         return {
@@ -11,7 +10,7 @@ export async function handler(event) {
     }
 
     try {
-        const resp = await fetch(`${API_URL}/api/search/${encodeURIComponent(nome)}`);
+        const resp = await fetch(`${API_URL}/api/busca/${encodeURIComponent(nome)}`);
 
         if (!resp.ok) {
             return {
@@ -20,12 +19,17 @@ export async function handler(event) {
             };
         }
 
-        const gato = await resp.json();
+        const lista = await resp.json();
 
-        // Sempre retornar array
+        const listaComUrl = lista.map(g => ({
+            ...g,
+            // ❗ NÃO concatena o domínio — já vem completo do backend
+            imagemUrl: g.imgUrl || null
+        }));
+
         return {
             statusCode: 200,
-            body: JSON.stringify([gato])
+            body: JSON.stringify(listaComUrl)
         };
 
     } catch (err) {
@@ -34,4 +38,4 @@ export async function handler(event) {
             body: JSON.stringify({ error: err.message })
         };
     }
-}
+};
