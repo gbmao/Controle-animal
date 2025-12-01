@@ -2,6 +2,7 @@ package com.projeto.controleanimal.security.jwt;
 
 import com.projeto.controleanimal.security.service.CustomUserDetails;
 import com.projeto.controleanimal.security.service.CustomUserDetailsServiceImpl;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,12 +10,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 @Component
@@ -25,6 +28,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private CustomUserDetailsServiceImpl customUserDetailsServiceImpl;
+
+    @Autowired
+    private AuthEntryPointJwt unauthorizedHandler;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
@@ -56,8 +62,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (Exception e) {
-            logger.error("Cannot set user authentication: {}", e);
+        } catch (JwtException e) {
+            logger.error("Erro JWT: {}", e.getMessage());
+            // JWT inválido → chama seu entrypoint
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token inválido: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);
