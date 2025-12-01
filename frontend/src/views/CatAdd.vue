@@ -38,13 +38,10 @@
 import BaseButton from '@/components/BaseButton.vue'
 import { ref } from 'vue'
 
-const API_URL = import.meta.env.VITE_API_URL
-const API_KEY = import.meta.env.VITE_API_KEY
-
 const animal = ref({
   name: "",
   birthDate: "", 
-  type: 'Cat'
+  type: "Cat"
 });
 
 function calcularIdade(dateString) {
@@ -54,9 +51,8 @@ function calcularIdade(dateString) {
   let idade = hoje.getFullYear() - nasc.getFullYear();
   const m = hoje.getMonth() - nasc.getMonth();
 
-  if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())){
+  if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate()))
     idade--;
-  }
 
   return idade;
 }
@@ -73,38 +69,46 @@ function handleFile(event) {
 
 async function salvar() {
   try {
+    // calcular idade automaticamente
     animal.value.age = calcularIdade(animal.value.birthDate);
 
     const res = await adicionarAnimal(animal.value, imagem.value);
-    console.log("Retorno:", res);
+
+    console.log("Retorno do adicionarAnimal:", res);
+
+    alert("Gato adicionado com sucesso!");
+
+    // limpar formulário
+    animal.value = { name: "", birthDate: "", type: "Cat" };
+    preview.value = null;
+
   } catch (e) {
-    console.error(e);
+    console.error("Erro no salvar():", e);
+    alert("Não foi possível adicionar o gato");
   }
 }
 
 async function adicionarAnimal(animal, imagem) {
   const formData = new FormData();
 
+  // corpo JSON
   formData.append(
     "data",
     new Blob([JSON.stringify(animal)], { type: "application/json" })
   );
 
-  // O backend espera "multipartImage"
+  // imagem se existir
   if (imagem) formData.append("multipartImage", imagem);
 
-  const response = await fetch(`/.netlify/functions/adicionar-gato`, {
-  method: "POST",
-  credentials: "include", // ESSENCIAL
-  body: formData
-});
-
-
-  if(response.ok) {
-    alert("Gato adicionado!")
-  }
+  // chamada ao Netlify
+  const response = await fetch("/.netlify/functions/adicionar-gato", {
+    method: "POST",
+    body: formData,
+    credentials: "include"   // ESSENCIAL P/ ENVIAR O JWT DO USUÁRIO
+  });
 
   if (!response.ok) {
+    console.error("Resposta do backend:", await response.text());
     throw new Error("Erro ao enviar animal");
   }
 

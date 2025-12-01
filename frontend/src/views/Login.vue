@@ -1,39 +1,86 @@
-<script setup>
-import { ref } from "vue";
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_API_URL;
-
-const login = ref("");     // nome da propriedade CERTA
-const password = ref("");
-const msg = ref("");
-
-async function loginUser() {
-  try {
-    const resp = await axios.post(`${API_URL}/api/auth/signin`, {
-      login: login.value,      // CORRETO
-      password: password.value
-    });
-
-    localStorage.setItem("token", resp.data.token);
-
-    msg.value = "Login realizado com sucesso!";
-    // window.location.href = "/listar";
-  } catch (err) {
-    msg.value = "Usuário ou senha incorretos";
-  }
-}
-</script>
-
 <template>
   <section class="login">
     <h2>Login</h2>
 
-    <input v-model="login" placeholder="Usuário (login)" />
-    <input v-model="password" type="password" placeholder="Senha" />
+    <div class="form">
+      <input
+        v-model="login"
+        placeholder="Login"
+      />
 
-    <button @click="loginUser">Entrar</button>
+      <input
+        v-model="password"
+        type="password"
+        placeholder="Senha"
+      />
 
-    <p v-if="msg">{{ msg }}</p>
+      <button @click="loginUser">
+        Entrar
+      </button>
+
+      <p>{{ msg }}</p>
+    </div>
   </section>
 </template>
+
+<script setup>
+import { ref } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import router from "@/router";
+
+const auth = useAuthStore();
+
+
+
+const login = ref("");
+const password = ref("");
+const msg = ref("");
+
+async function loginUser() {
+  msg.value = "";
+
+  try {
+    const resp = await fetch("/.netlify/functions/login", {
+      method: "POST",
+      credentials: "include", // ESSENCIAL → recebe o cookie HttpOnly
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        login: login.value,
+        password: password.value
+      })
+    });
+
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      msg.value = data.message || "Usuário ou senha incorretos";
+      return;
+    }
+
+    // Guarda apenas o usuário (não o token)
+    auth.setUser(data.login);
+    router.push("/listar");
+
+    msg.value = "Login realizado com sucesso!";
+    // window.location.href = "/listar";
+
+  } catch (err) {
+    msg.value = "Erro ao conectar ao servidor";
+  }
+}
+</script>
+
+<style scoped>
+.login {
+  max-width: 350px;
+  margin: 0 auto;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+button {
+  padding: 10px 20px;
+}
+</style>
