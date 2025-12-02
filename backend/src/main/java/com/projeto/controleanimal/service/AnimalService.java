@@ -64,7 +64,7 @@ public class AnimalService {
     public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto, MultipartFile multipartImage, Long userId) throws Exception {
 
 
-        validator.validate(animalDto.name());
+        validator.validate(animalDto.name(),userId);
         validator.validate(animalDto.birthDate());
 
         Animal animal = createAnimalEntity(animalDto);
@@ -87,14 +87,14 @@ public class AnimalService {
         //colocar alguma msg avisando que foi deletado???
     }
 
-    public AnimalDto changeAnimal(Long animalId, AnimalUpdateDto animalUpdateDto) {
+    public AnimalDto changeAnimal(Long animalId, AnimalUpdateDto animalUpdateDto, Long userId) {
 
         var animalToBeChanged = repo.findById(animalId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Id não encontrado"));
 
 
         if (animalUpdateDto.name() != null) {
-            validator.validate(animalUpdateDto.name());
+            validator.validate(animalUpdateDto.name(),userId);
             animalToBeChanged.setName(animalUpdateDto.name());
         }
 

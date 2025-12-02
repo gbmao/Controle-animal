@@ -83,7 +83,7 @@ public class AnimalController {
         userService.checkAnimalId(user.getId(), animalId);
         ApiKeyValidator.check(key);
 
-        return service.changeAnimal(animalId, animalDto);
+        return service.changeAnimal(animalId, animalDto, user.getId());
     }
 
     @GetMapping("/busca/{name}")
