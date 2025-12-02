@@ -1,4 +1,5 @@
-exports.handler = async function(event) {
+export const handler = async (event) => {
+
     const API_URL = process.env.VITE_API_URL;
     const nome = event.queryStringParameters?.nome;
 
