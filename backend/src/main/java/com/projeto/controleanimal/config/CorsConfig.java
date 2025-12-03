@@ -41,7 +41,8 @@ public class CorsConfig { // Não precisa mais de WebMvcConfigurer
                 "https://controle-animal-production.up.railway.app",
                 "https://patrulha-felina.netlify.app",
                 "http://localhost:8080",
-                "http://localhost:8888"
+                "http://localhost:8888",
+                "https://controle-animal.onrender.com"
         );
 
         configuration.setAllowedOrigins(allowedOrigins);
