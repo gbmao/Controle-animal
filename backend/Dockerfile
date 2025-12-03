@@ -1,5 +1,5 @@
 # Estágio de Build (Usando Maven para construir o JAR)
-FROM maven:3.8.7-openjdk-17 AS build
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
 # Copia o arquivo pom.xml para que o Maven possa baixar as dependências
@@ -13,7 +13,7 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 # Estágio de Runtime (Usando uma imagem mais leve para rodar)
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 # Expõe a porta que o Spring Boot usa (padrão é 8080)
