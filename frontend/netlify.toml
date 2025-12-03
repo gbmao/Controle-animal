@@ -1,16 +1,16 @@
-[dev]
-  framework = "vite"
-  targetPort = 5174
-
-[functions]
-  directory = "netlify/functions"
-
+# netlify.toml
 [build]
-  publish = "dist"
   command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+[dev]
+  # Tell Netlify Dev which port your Vite server runs on
+  targetPort = 5174
+  port = 8888
+  publish = "dist"
+  functions = "netlify/functions"
 
+[dev.environment]
+  VITE_API_URL = "https://controle-animal.onrender.com"
+  VITE_API_KEY = "senhaanimal"
