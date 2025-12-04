@@ -38,3 +38,6 @@ backend/src/main/java/com/projeto/controleanimal/TestMain.java
 backend/src/main/resources/application-dbprod.properties
 # Local Netlify folder
 .netlify
+
+
+.env
