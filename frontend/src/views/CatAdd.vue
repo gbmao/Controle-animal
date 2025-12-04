@@ -126,14 +126,12 @@ const isNameTaken = computed(() => {
 });
 
 const nameValidation = computed(() => {
-  if (!animal.value.name.trim()) return "Digite um nome";
   if (isNameTaken.value) return "Este nome já está em uso";
   if (animal.value.name.length > 20) return "Nome muito longo (máx. 20 caracteres)";
   return "";
 });
 
 const birthDateValidation = computed(() => {
-  if (!animal.value.birthDate) return "Selecione uma data";
   const birthDate = new Date(animal.value.birthDate);
   const todayDate = new Date();
   if (birthDate > todayDate) return "Data não pode ser futura";
@@ -302,7 +300,7 @@ async function salvar() {
 
     const res = await adicionarAnimal(animal.value, imagem.value);
 
-    alert("✅ Gato adicionado com sucesso!");
+    alert("Gato adicionado com sucesso!");
     
     // Reset form
     animal.value = { name: "", birthDate: "", type: "Cat" };
@@ -323,87 +321,3 @@ async function salvar() {
   }
 }
 </script>
-
-<style scoped>
-.validation-message {
-  color: #dc3545;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-  min-height: 1.25rem;
-}
-
-input.error {
-  border-color: #dc3545;
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-button.loading {
-  position: relative;
-}
-
-.spinning {
-  animation: spin 1s linear infinite;
-  display: inline-block;
-  margin-right: 0.5rem;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.error-message {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 0.75rem;
-  border-radius: 0.375rem;
-  margin-top: 1rem;
-  border: 1px solid #f5c6cb;
-}
-
-.file-name {
-  display: block;
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-  color: #6c757d;
-}
-
-.preview {
-  position: relative;
-  margin-top: 1rem;
-  max-width: 200px;
-}
-
-.preview img {
-  max-width: 100%;
-  max-height: 200px;
-  border-radius: 0.375rem;
-  border: 2px solid #dee2e6;
-}
-
-.remove-image-btn {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  background: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-.remove-image-btn:hover {
-  background: #c82333;
-}
-</style>

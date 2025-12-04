@@ -63,12 +63,6 @@
 
     <p v-else>Nenhum gato encontrado</p>
     
-    <!-- Debug toggle -->
-    <div class="debug-toggle">
-      <button @click="showDebug = !showDebug">
-        {{ showDebug ? 'Hide Debug' : 'Show Debug Info' }}
-      </button>
-    </div>
   </section>
 </template>
 
