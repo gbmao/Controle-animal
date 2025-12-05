@@ -11,6 +11,8 @@ public class SignupRequest {
     private String login;
 
     @NotBlank
+    @Email(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+            message = "EMail inválido")
     @Size(max = 50)
     @Email
     private String email;

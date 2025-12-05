@@ -25,8 +25,7 @@ public class AppUser implements UserDetails {
     @ElementCollection
     private List<Long> animalIds = new ArrayList<>();
 
-    @NotBlank
-    @Email
+
     @Column(nullable = false, unique = true)
     private String email;
 
