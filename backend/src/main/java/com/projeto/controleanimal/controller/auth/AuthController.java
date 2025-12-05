@@ -16,6 +16,7 @@ import com.projeto.controleanimal.security.jwt.JwtUtils;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.server.ResponseStatusException;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -68,18 +69,15 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerAppUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (UserRepository.existsByLogin(signUpRequest.getLogin().trim())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Já exite AppUser com esse nome!"));
+
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe AppUser com esse nome!");
         }
 
         if (UserRepository.existsByEmail(signUpRequest.getEmail().trim())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email já está em uso!"));
+
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe AppUser com esse email: " + signUpRequest.getEmail().trim());
         }
 
-        //TODO retornar email null response
         // Create new AppUser's account
         AppUser AppUser = new AppUser(signUpRequest.getLogin().trim(),
                 signUpRequest.getEmail().trim(),
