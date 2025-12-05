@@ -35,12 +35,6 @@ public class ImageController {
         this.userService = userService;
     }
 
-    //TODO criado apenas para testes, remover antes do deploy
-    @GetMapping("/all")
-    List<ImageInfoDto> getAllImgInfo() {
-
-        return service.getAllImgInfo();
-    }
 
 
     // post automaticamente deleta a imagem antiga e faz upload da nova
