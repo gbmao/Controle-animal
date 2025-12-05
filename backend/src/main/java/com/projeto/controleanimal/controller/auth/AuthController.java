@@ -52,15 +52,12 @@ public class AuthController {
     public ResponseEntity<?> authenticateAppUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.login(), loginRequest.password()));
+                new UsernamePasswordAuthenticationToken(loginRequest.login().trim(), loginRequest.password()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         CustomUserDetails AppUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        List<String> roles = AppUserDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 AppUserDetails.getId(),
@@ -70,21 +67,22 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerAppUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (UserRepository.existsByLogin(signUpRequest.getLogin())) {
+        if (UserRepository.existsByLogin(signUpRequest.getLogin().trim())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Já exite AppUser com esse nome!"));
         }
 
-        if (UserRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (UserRepository.existsByEmail(signUpRequest.getEmail().trim())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Email já está em uso!"));
         }
 
+        //TODO retornar email null response
         // Create new AppUser's account
-        AppUser AppUser = new AppUser(signUpRequest.getLogin(),
-                signUpRequest.getEmail(),
+        AppUser AppUser = new AppUser(signUpRequest.getLogin().trim(),
+                signUpRequest.getEmail().trim(),
                 encoder.encode(signUpRequest.getPassword()));
 
 
