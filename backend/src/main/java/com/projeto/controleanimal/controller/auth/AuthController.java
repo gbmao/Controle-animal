@@ -16,6 +16,7 @@ import com.projeto.controleanimal.security.jwt.JwtUtils;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.server.ResponseStatusException;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -52,15 +53,12 @@ public class AuthController {
     public ResponseEntity<?> authenticateAppUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.login(), loginRequest.password()));
+                new UsernamePasswordAuthenticationToken(loginRequest.login().trim(), loginRequest.password()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         CustomUserDetails AppUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        List<String> roles = AppUserDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 AppUserDetails.getId(),
@@ -70,21 +68,19 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerAppUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (UserRepository.existsByLogin(signUpRequest.getLogin())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Já exite AppUser com esse nome!"));
+        if (UserRepository.existsByLogin(signUpRequest.getLogin().trim())) {
+
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe AppUser com esse nome!");
         }
 
-        if (UserRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email já está em uso!"));
+        if (UserRepository.existsByEmail(signUpRequest.getEmail().trim())) {
+
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe AppUser com esse email: " + signUpRequest.getEmail().trim());
         }
 
         // Create new AppUser's account
-        AppUser AppUser = new AppUser(signUpRequest.getLogin(),
-                signUpRequest.getEmail(),
+        AppUser AppUser = new AppUser(signUpRequest.getLogin().trim(),
+                signUpRequest.getEmail().trim(),
                 encoder.encode(signUpRequest.getPassword()));
 
 
