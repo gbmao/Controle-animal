@@ -63,7 +63,7 @@ li, h2 {
 
 h2 {
     font-weight: 400;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 h3 {
@@ -190,6 +190,25 @@ button {
     transition: ease-in-out .4s;
     color: var(--text-color);
 }
+
+/* ===========================
+    LOGIN (Mobile)
+=========================== */
+.cadastro-link {
+    background-color: var(--header-bg);
+    color: var(--text-header);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.cadastro-link:hover {
+    transition: ease-in-out .4s;
+    cursor: pointer;
+}
+
+
 
 /* ===========================
     SEÇÃO PRINCIPAL (Mobile)
@@ -432,17 +451,7 @@ main {
 }
 
 .header {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
     padding: 0.5rem 1rem;
-    z-index: 2;
-    background-color: var(--header-bg);
-    font-family: "Montserrat", sans-serif;
-    color: var(--text-header);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .header--text {

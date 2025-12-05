@@ -1,5 +1,7 @@
 <template>
   <section class="login">
+
+    <div class="login-info">
     <h2>Login</h2>
 
     <div class="form">
@@ -13,12 +15,19 @@
         type="password"
         placeholder="Senha"
       />
-
-      <button @click="loginUser">
-        Entrar
+      <button>
+        <BaseButton @click="loginUser"
+          title="Entrar"
+          icon="bi bi-box-arrow-in-right"
+        />
       </button>
-
       <p>{{ msg }}</p>
+    </div>
+      <div>
+        <h2>Ainda não tem uma conta?</h2>
+        <p><span class="cadastro-link" @click="goToSignup">Cadastre-se</span></p>
+      </div>
+    
     </div>
   </section>
 </template>
@@ -27,6 +36,7 @@
 import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import router from "@/router";
+import BaseButton from "@/components/BaseButton.vue";
 
 const auth = useAuthStore();
 
@@ -68,19 +78,35 @@ async function loginUser() {
     msg.value = "Erro ao conectar ao servidor";
   }
 }
+
+function goToSignup() {
+  router.push("/signup");
+}
 </script>
 
 <style scoped>
+
 .login {
-  max-width: 350px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
 }
+
+.login-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.5rem;
 }
+
 button {
-  padding: 10px 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
+
 </style>
