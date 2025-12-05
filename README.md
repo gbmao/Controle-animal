@@ -176,7 +176,7 @@ Este é um projeto de aprendizado, mas contribuições são bem-vindas!
 ## 👥 Autores
 
 - **Gabriel** ([@gbmao](https://github.com/gbmao)) - Backend Developer
-- **Débora**([@deboradevsouza] (https://github.com/deboradevsouza))  - Frontend Developer
+- **Débora**([@deboradevsouza](https://github.com/deboradevsouza))  - Frontend Developer
 
 ## 📄 Licença
 
