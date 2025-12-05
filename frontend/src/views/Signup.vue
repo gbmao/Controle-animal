@@ -6,7 +6,12 @@
     <input v-model="email" placeholder="Email" />
     <input v-model="password" type="password" placeholder="Senha" />
 
-    <button @click="signupUser">Cadastrar</button>
+    <button >
+      <BaseButton @click="signupUser"
+          title="Entrar"
+          icon="bi bi-box-arrow-in-right"
+        />
+      </button>
 
     <p v-if="msg">{{ msg }}</p>
   </section>
@@ -15,6 +20,7 @@
 <script setup>
 import { ref } from "vue";
 import axios from "axios";
+import BaseButton from "@/components/BaseButton.vue";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -37,3 +43,12 @@ async function signupUser() {
   }
 }
 </script>
+
+<style scoped>
+button {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+</style>
