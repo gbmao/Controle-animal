@@ -41,7 +41,7 @@ public final class AnimalValidator {
 
         if (!commonIds.isEmpty()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
+                    HttpStatus.CONFLICT,
                     "Já existe o nome: " + name + " na lista do user: " + user.getUsername()
             );
         }
@@ -50,7 +50,7 @@ public final class AnimalValidator {
 
     public void validate(LocalDate birthDate) {
         if (birthDate.isAfter(LocalDate.now()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O gato ainda vai nascer?(data de nascimento no futuro");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "O gato ainda vai nascer?(data de nascimento no futuro");
     }
 
 }

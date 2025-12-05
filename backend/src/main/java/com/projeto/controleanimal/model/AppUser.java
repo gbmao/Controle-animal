@@ -1,6 +1,10 @@
 package com.projeto.controleanimal.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -21,12 +25,15 @@ public class AppUser implements UserDetails {
     @ElementCollection
     private List<Long> animalIds = new ArrayList<>();
 
+
     @Column(nullable = false, unique = true)
     private String email;
 
+    @NotBlank
     @Column(nullable = false,unique = true)
     private String login;
 
+    @NotBlank
     @Column(nullable = false)
     private String password;
 
