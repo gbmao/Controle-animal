@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 public class Image {
 
 
-    //TODO checar se animal só tem uma imagem
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator = "image_seq_generator")
@@ -26,11 +25,6 @@ public class Image {
     private Animal animal;
 
     String name;
-
-//    public Image(Long animal_id,byte[] content, String name) {
-//        this.content = content;
-//        this.name = name;
-//    }
 
 
     public Image() {

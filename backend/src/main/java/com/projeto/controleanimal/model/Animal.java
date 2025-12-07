@@ -34,7 +34,7 @@ public abstract class Animal { //removido o abstract para teste do postqgre
             throw new IllegalArgumentException("Nome vazio!");
         }
         this.name = name;
-        this.birthDate = birthDate; //TODO animal esta sendo criado com idade 0 caso null
+        this.birthDate = birthDate; // animal esta sendo criado com idade 0 caso null
     }
 
     public String getName() {
@@ -56,14 +56,10 @@ public abstract class Animal { //removido o abstract para teste do postqgre
         return age;
     }
 
-    // setters devem ser chamados apenas por  funçoes especificas
-    //ex crie uma funcao changeName()
     public void setName(String name) {
         this.name = name;
     }
 
-    //eventualmente criar um envelhecimento automatico baseado na data de nascimento do animal
-    // funcao birthday() que alem de alterar a idade daria um aviso de aniversario
     public void setAge(int age) {
         this.age = age;
     }
