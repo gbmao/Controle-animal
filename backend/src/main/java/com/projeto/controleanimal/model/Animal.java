@@ -4,6 +4,7 @@ import com.projeto.controleanimal.model.vetRecord.VeterinaryRecord;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -45,15 +46,8 @@ public abstract class Animal { //removido o abstract para teste do postqgre
 
         if(this.birthDate == null) return 0; // apenas para evitar null pointer exception para os cats criados antes
 
-        var today = LocalDate.now();
-        var age = today.getYear() - birthDate.getYear();
-
-        if (today.getMonthValue() < birthDate.getMonthValue() ||
-                (today.getMonthValue() == birthDate.getMonthValue() && today.getDayOfMonth() < birthDate.getDayOfMonth())) {
-            age--;
-        }
-
-        return age;
+        Period period = Period.between(birthDate, LocalDate.now());
+        return period.getYears();
     }
 
     public void setName(String name) {
