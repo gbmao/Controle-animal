@@ -50,6 +50,13 @@ public abstract class Animal { //removido o abstract para teste do postqgre
         return period.getYears();
     }
 
+    public int getMonth() {
+        if(this.birthDate == null) return 0; // apenas para evitar null pointer exception para os cats criados antes
+
+        Period period = Period.between(birthDate, LocalDate.now());
+        return period.getMonths();
+    }
+
     public void setName(String name) {
         this.name = name;
     }
