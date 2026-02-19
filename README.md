@@ -43,12 +43,14 @@ Um sistema completo para gerenciamento de animais de estimação, desenvolvido p
 - **JUnit 5 & Mockito** - Testes unitários
 
 ### Frontend
-- **React 18** - Biblioteca UI
-- **TypeScript** - Tipagem estática
-- **Tailwind CSS** - Estilização
-- **React Router** - Navegação
+- **Vue 3** - Framework JavaScript progressivo
+- **Vue Router 4** - Roteamento e navegação
+- **Pinia** - Gerenciamento de estado (stores)
+- **Vite** - Build tool e bundler
 - **Axios** - Cliente HTTP
-- **React Hook Form** - Formulários
+- **CSS Custom Properties** - Variáveis CSS para temas (light/dark mode)
+- **Font Awesome / Bootstrap Icons** - Ícones via classes CSS (bi-*)
+- **Netlify Functions** - Serverless functions para proxy de API
 
 ## 📦 Instalação
 
