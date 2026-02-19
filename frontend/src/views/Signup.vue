@@ -14,9 +14,11 @@
 
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const router = useRouter();
+const auth = useAuthStore();
 
 const login = ref("");
 const email = ref("");
@@ -24,16 +26,58 @@ const password = ref("");
 const msg = ref("");
 
 async function signupUser() {
+  msg.value = "";
+
   try {
-    const resp = await axios.post(`${API_URL}/api/auth/signup`, {
-      login: login.value,
-      email: email.value,
-      password: password.value
+    // 1) SIGNUP
+    const respSignup = await fetch("/.netlify/functions/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        login: login.value,
+        email: email.value,
+        password: password.value
+      })
     });
 
-    msg.value = resp.data.message || "Cadastro realizado com sucesso!";
+    const dataSignup = await respSignup.json();
+
+    if (!respSignup.ok) {
+      msg.value = dataSignup.message || "Erro ao cadastrar";
+      return;
+    }
+
+    // 2) LOGIN AUTOMÁTICO
+    const respLogin = await fetch("/.netlify/functions/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // MUITO IMPORTANTE para receber cookie HttpOnly
+      body: JSON.stringify({
+        login: login.value,
+        password: password.value
+      })
+    });
+
+    const dataLogin = await respLogin.json();
+
+    if (!respLogin.ok) {
+      msg.value = "Conta criada, mas erro ao autenticar.";
+      console.log("Erro login:", dataLogin);
+      return;
+    }
+
+    // 3) ATUALIZA PINIA
+    auth.login({
+      login: dataLogin.login,
+      email: dataLogin.email,
+      id: dataLogin.id
+    });
+
+    // 4) REDIRECIONA PARA LISTAR
+    router.push("/listar");
+
   } catch (err) {
-    msg.value = err.response?.data?.message || "Erro ao cadastrar";
+    msg.value = "Erro inesperado ao cadastrar.";
   }
 }
 </script>

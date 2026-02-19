@@ -5,11 +5,11 @@
     <div class="header__logo">
       <img class="logo--projeto" src="./assets/controle-animal.png" alt="logo do projeto">
       <h1 class="header--text">Controle Animal</h1>
-
     </div>
 
     <div class="header__toggle">
-      <i id="toggleTheme"
+      <i
+        id="toggleTheme"
         :class="['bi', theme === 'dark' ? 'bi-moon' : 'bi-sun']"
         @click="toggleTheme"
       ></i>
@@ -19,8 +19,8 @@
   <main>
     <RouterView />
   </main>
-  <NavMenuMobile />
 
+  <NavMenuMobile />
 </template>
 
 <script setup>
@@ -38,7 +38,6 @@ onMounted(() => {
 
 function toggleTheme() {
   const root = document.documentElement
-
   theme.value = theme.value === 'dark' ? 'light' : 'dark'
   root.setAttribute('data-theme', theme.value)
 }

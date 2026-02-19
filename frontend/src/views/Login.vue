@@ -30,8 +30,6 @@ import router from "@/router";
 
 const auth = useAuthStore();
 
-
-
 const login = ref("");
 const password = ref("");
 const msg = ref("");
@@ -52,35 +50,35 @@ async function loginUser() {
 
     const data = await resp.json();
 
+    console.log("Login response:", data); // DEBUG
+
     if (!resp.ok) {
-      msg.value = data.message || "Usuário ou senha incorretos";
+      msg.value = data.message || data.error || "Usuário ou senha incorretos";
       return;
     }
 
-    // Guarda apenas o usuário (não o token)
-    auth.setUser(data.login);
-    router.push("/listar");
+    // Guarda o usuário (agora vem como data.user)
+    if (data.user) {
+      auth.setUser(data.user);
+    } else if (data.login) {
+      // Fallback to individual fields
+      auth.setUser({
+        id: data.id,
+        login: data.login, // Changed from username to login
+        email: data.email
+      });
+    }
 
     msg.value = "Login realizado com sucesso!";
-    // window.location.href = "/listar";
+    
+    // Wait a moment to ensure cookie is set
+    setTimeout(() => {
+      router.push("/listar");
+    }, 100);
 
   } catch (err) {
+    console.error("Login error:", err);
     msg.value = "Erro ao conectar ao servidor";
   }
 }
 </script>
-
-<style scoped>
-.login {
-  max-width: 350px;
-  margin: 0 auto;
-}
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-button {
-  padding: 10px 20px;
-}
-</style>

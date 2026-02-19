@@ -9,11 +9,11 @@ import { useAuthStore } from "@/stores/auth";
 const routes = [
   { path: "/", redirect: "/login" },
 
-  // PÚBLICAS
+  // ROTAS PÚBLICAS
   { path: "/login", component: Login },
   { path: "/signup", component: Signup },
 
-  // PRIVADAS
+  // ROTAS PRIVADAS
   { path: "/listar", component: CatList, meta: { requiresAuth: true } },
   { path: "/buscar", component: CatSearch, meta: { requiresAuth: true } },
   { path: "/adicionar", component: CatAdd, meta: { requiresAuth: true } },
@@ -24,15 +24,16 @@ const router = createRouter({
   routes,
 });
 
+// PROTEÇÃO DE ROTAS
 router.beforeEach((to) => {
   const auth = useAuthStore();
 
-  // ROTA PROTEGIDA → usuário não está logado
+  // Rota protegida → não logado
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
     return "/login";
   }
 
-  // Usuário logado tentando acessar /login → manda para /listar
+  // Usuário logado tentando acessar login → enviar para listar
   if (to.path === "/login" && auth.isAuthenticated) {
     return "/listar";
   }

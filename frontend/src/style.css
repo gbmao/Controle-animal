@@ -117,11 +117,20 @@ button {
     background-repeat: no-repeat;
     background-position: center;
     
-    /* 🔥 Aqui você controla o tamanho DO PNG individualmente */
+   
     background-size: 50px;
     filter: grayscale(100%);
-
 }
+
+.placeholder span,
+.placeholder small {
+  display: none; 
+}
+
+.placeholder i {
+  display: none;
+}
+
 /* ===========================
     HEADER — Mobile First
 =========================== */

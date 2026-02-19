@@ -45,6 +45,7 @@ public class AnimalService {
                 .map(s -> new AnimalWithImgIdReturnDto(s.getId(),
                         s.getName(),
                         s.getAge(),
+                        s.getMonth(),
                         s.getClass().getSimpleName()
                         , s.getImage() == null ? -1 : s.getImage().getId()))
                 .toList();
@@ -57,14 +58,14 @@ public class AnimalService {
         var animal = repo.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Nao encontramos animal com o id: " + id));
 
-        return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName());
+        return new AnimalDto(animal.getId(), animal.getName(), animal.getAge(), animal.getMonth(), animal.getClass().getSimpleName());
     }
 
 
     public AnimalWithImgIdReturnDto addAnimal(AnimalCreationDto animalDto, MultipartFile multipartImage, Long userId) throws Exception {
 
 
-        validator.validate(animalDto.name(),userId);
+        validator.validate(animalDto.name(), userId);
         validator.validate(animalDto.birthDate());
 
         Animal animal = createAnimalEntity(animalDto);
@@ -78,7 +79,7 @@ public class AnimalService {
 
     public void deleteAnimal(Long id) {
         Animal animal = repo.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NO_CONTENT,"User Possui esse id, porem nao existe, no database, animal com o id: " + id)
+                () -> new ResponseStatusException(HttpStatus.NO_CONTENT, "User Possui esse id, porem nao existe, no database, animal com o id: " + id)
         );
 
         animal.setImage(null);
@@ -94,7 +95,7 @@ public class AnimalService {
 
 
         if (animalUpdateDto.name() != null) {
-            validator.validate(animalUpdateDto.name(),userId);
+            validator.validate(animalUpdateDto.name(), userId);
             animalToBeChanged.setName(animalUpdateDto.name());
         }
 
@@ -106,6 +107,7 @@ public class AnimalService {
         repo.save(animalToBeChanged);
 
         return new AnimalDto(animalToBeChanged.getId(), animalToBeChanged.getName(), animalToBeChanged.getAge(),
+                animalToBeChanged.getMonth(),
                 animalToBeChanged.getClass().getSimpleName());
     }
 
@@ -129,6 +131,7 @@ public class AnimalService {
                         a.getId(),
                         a.getName(),
                         a.getAge(),
+                        a.getMonth(),
                         a.getClass().getSimpleName(),
                         createImgUrl(a.getId())))
                 .toList();
@@ -143,12 +146,14 @@ public class AnimalService {
         return new AnimalWithImgDto(animal.getId(),
                 animal.getName(),
                 animal.getAge(),
+                animal.getMonth(),
                 animal.getClass().getSimpleName(),
                 createImgUrl(animal.getId()));
     }
 
     /**
      * Basicamente adiciona /images/{animalId} a url atual, ou seja é dinamica
+     *
      * @return String
      */
     private String createImgUrl(Long animalId) {
@@ -188,6 +193,7 @@ public class AnimalService {
 
         return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),
                 animal.getAge(),
+                animal.getMonth(),
                 animal.getClass().getSimpleName(),
                 null);
     }
@@ -199,7 +205,9 @@ public class AnimalService {
         repo.save(animal);
         //colocando o id do animal no User
         saveAnimalIdToUser(animal, userId);
-        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(), animal.getAge(), animal.getClass().getSimpleName(),
+        return new AnimalWithImgIdReturnDto(animal.getId(), animal.getName(),
+                animal.getAge(), animal.getMonth(),
+                animal.getClass().getSimpleName(),
                 animal.getImage().getId());
     }
 
